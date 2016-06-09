@@ -8,12 +8,15 @@
 
 import UIKit
 import CoreData
+import WatchConnectivity
 
-class MainViewController: UIViewController {
+class MainViewController: UIViewController, WCSessionDelegate {
     
     var addedEventView: Bool = false
     
     var statusBarShowing: Bool = true
+    
+    var watchSession: WCSession!
     
     @IBOutlet weak var boxesView: UIView!
 
@@ -91,6 +94,16 @@ class MainViewController: UIViewController {
         
         // Fetch popular events
         let topEvents = self.getTopEvents()
+        
+        // Send top events to watch app
+        NSLog("SENDING DATA TO WATCH")
+        do {
+            try self.watchSession?.updateApplicationContext(
+                ["topEvents" : topEvents]
+            )
+        } catch let error as NSError {
+            NSLog("Updating the context failed: " + error.localizedDescription)
+        }
         
         let countOfTopEvents = topEvents.count
         
@@ -420,6 +433,48 @@ class MainViewController: UIViewController {
                 )
             }
         )
+    }
+    
+    // Receive message from the watch to add event
+    func session(session: WCSession, didReceiveMessage message: [String : AnyObject], replyHandler: ([String : AnyObject]) -> Void) {
+        let newEvent : String = message["event"] as! String
+        NSLog("RECEIVED NEW EVENT TO ADD: %@", newEvent)
+
+        self.addQuickEvent(newEvent)
+        
+        replyHandler(["status": "OK"])
+    }
+    
+    // Add a quick event
+    func addQuickEvent(eventName: String) {
+        let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
+        let context = appDelegate.managedObjectContext
+        
+        // Set defaults
+        let eventDate: NSDate = NSDate()// Default event date to "now"
+        
+        NSLog("VALUES = %@, %@", eventName, eventDate)
+        
+        //
+        // Save object
+        //
+        
+        let newEvent: NSManagedObject = NSEntityDescription.insertNewObjectForEntityForName("Event", inManagedObjectContext: context!)
+        newEvent.setValue(eventName, forKey: "name")
+        newEvent.setValue(eventDate, forKey: "date")
+        
+        var error: NSError? = nil
+        do {
+            try context?.save()
+        } catch let error1 as NSError {
+            error = error1
+        }
+        
+        if (error == nil) {
+            // Nothing?
+        } else {
+            NSLog("Error: %@", error!)
+        }
     }
 }
 

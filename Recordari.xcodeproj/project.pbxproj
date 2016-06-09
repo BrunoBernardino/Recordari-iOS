@@ -8,6 +8,15 @@
 
 /* Begin PBXBuildFile section */
 		4F2703F91B5FA8B6007F3465 /* AddEventViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F2703F81B5FA8B6007F3465 /* AddEventViewController.swift */; };
+		4F5814BC1D0A10E9001F014F /* Interface.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4F5814BA1D0A10E9001F014F /* Interface.storyboard */; };
+		4F5814BE1D0A10E9001F014F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4F5814BD1D0A10E9001F014F /* Assets.xcassets */; };
+		4F5814C51D0A10E9001F014F /* Watch Extension.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 4F5814C41D0A10E9001F014F /* Watch Extension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		4F5814CA1D0A10E9001F014F /* InterfaceController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F5814C91D0A10E9001F014F /* InterfaceController.swift */; };
+		4F5814CC1D0A10E9001F014F /* ExtensionDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F5814CB1D0A10E9001F014F /* ExtensionDelegate.swift */; };
+		4F5814CE1D0A10E9001F014F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4F5814CD1D0A10E9001F014F /* Assets.xcassets */; };
+		4F5814D21D0A10E9001F014F /* Watch.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = 4F5814B81D0A10E9001F014F /* Watch.app */; };
+		4F5814DE1D0A16EE001F014F /* EventsTableRowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F5814DD1D0A16EE001F014F /* EventsTableRowController.swift */; };
+		4F5814E01D0A2F25001F014F /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FC2AA2D1B5E651E0000FC86 /* MainViewController.swift */; };
 		4F86394B1B668B6600CC4936 /* EditEventViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F86394A1B668B6600CC4936 /* EditEventViewController.swift */; };
 		4FBD43B21B5FD5AC00623FCB /* EventTableCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FBD43B11B5FD5AC00623FCB /* EventTableCell.swift */; };
 		4FC2AA2C1B5E651E0000FC86 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FC2AA2B1B5E651E0000FC86 /* AppDelegate.swift */; };
@@ -22,6 +31,20 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		4F5814C61D0A10E9001F014F /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4FC2AA1E1B5E651E0000FC86 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 4F5814C31D0A10E9001F014F;
+			remoteInfo = "Watch Extension";
+		};
+		4F5814D01D0A10E9001F014F /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4FC2AA1E1B5E651E0000FC86 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 4F5814B71D0A10E9001F014F;
+			remoteInfo = Watch;
+		};
 		4FC2AA3E1B5E651E0000FC86 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 4FC2AA1E1B5E651E0000FC86 /* Project object */;
@@ -31,9 +54,44 @@
 		};
 /* End PBXContainerItemProxy section */
 
+/* Begin PBXCopyFilesBuildPhase section */
+		4F5814D61D0A10E9001F014F /* Embed App Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				4F5814C51D0A10E9001F014F /* Watch Extension.appex in Embed App Extensions */,
+			);
+			name = "Embed App Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4F5814DA1D0A10E9001F014F /* Embed Watch Content */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "$(CONTENTS_FOLDER_PATH)/Watch";
+			dstSubfolderSpec = 16;
+			files = (
+				4F5814D21D0A10E9001F014F /* Watch.app in Embed Watch Content */,
+			);
+			name = "Embed Watch Content";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
 		4F24AEFB1B5FF637009B3D5E /* Recordari.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = Recordari.entitlements; sourceTree = "<group>"; };
 		4F2703F81B5FA8B6007F3465 /* AddEventViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddEventViewController.swift; sourceTree = "<group>"; };
+		4F5814B81D0A10E9001F014F /* Watch.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Watch.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		4F5814BB1D0A10E9001F014F /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Interface.storyboard; sourceTree = "<group>"; };
+		4F5814BD1D0A10E9001F014F /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		4F5814BF1D0A10E9001F014F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		4F5814C41D0A10E9001F014F /* Watch Extension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "Watch Extension.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
+		4F5814C91D0A10E9001F014F /* InterfaceController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InterfaceController.swift; sourceTree = "<group>"; };
+		4F5814CB1D0A10E9001F014F /* ExtensionDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtensionDelegate.swift; sourceTree = "<group>"; };
+		4F5814CD1D0A10E9001F014F /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		4F5814CF1D0A10E9001F014F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		4F5814DD1D0A16EE001F014F /* EventsTableRowController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EventsTableRowController.swift; sourceTree = "<group>"; };
 		4F86394A1B668B6600CC4936 /* EditEventViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EditEventViewController.swift; sourceTree = "<group>"; };
 		4FBD43B11B5FD5AC00623FCB /* EventTableCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EventTableCell.swift; sourceTree = "<group>"; };
 		4FC2AA261B5E651E0000FC86 /* Recordari.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Recordari.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -52,6 +110,13 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		4F5814C11D0A10E9001F014F /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		4FC2AA231B5E651E0000FC86 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -69,11 +134,35 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		4F5814B91D0A10E9001F014F /* Watch */ = {
+			isa = PBXGroup;
+			children = (
+				4F5814BA1D0A10E9001F014F /* Interface.storyboard */,
+				4F5814BD1D0A10E9001F014F /* Assets.xcassets */,
+				4F5814BF1D0A10E9001F014F /* Info.plist */,
+			);
+			path = Watch;
+			sourceTree = "<group>";
+		};
+		4F5814C81D0A10E9001F014F /* Watch Extension */ = {
+			isa = PBXGroup;
+			children = (
+				4F5814C91D0A10E9001F014F /* InterfaceController.swift */,
+				4F5814DD1D0A16EE001F014F /* EventsTableRowController.swift */,
+				4F5814CB1D0A10E9001F014F /* ExtensionDelegate.swift */,
+				4F5814CD1D0A10E9001F014F /* Assets.xcassets */,
+				4F5814CF1D0A10E9001F014F /* Info.plist */,
+			);
+			path = "Watch Extension";
+			sourceTree = "<group>";
+		};
 		4FC2AA1D1B5E651E0000FC86 = {
 			isa = PBXGroup;
 			children = (
 				4FC2AA281B5E651E0000FC86 /* Recordari */,
 				4FC2AA401B5E651E0000FC86 /* RecordariTests */,
+				4F5814B91D0A10E9001F014F /* Watch */,
+				4F5814C81D0A10E9001F014F /* Watch Extension */,
 				4FC2AA271B5E651E0000FC86 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -83,6 +172,8 @@
 			children = (
 				4FC2AA261B5E651E0000FC86 /* Recordari.app */,
 				4FC2AA3D1B5E651E0000FC86 /* RecordariTests.xctest */,
+				4F5814B81D0A10E9001F014F /* Watch.app */,
+				4F5814C41D0A10E9001F014F /* Watch Extension.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -135,6 +226,40 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		4F5814B71D0A10E9001F014F /* Watch */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 4F5814D71D0A10E9001F014F /* Build configuration list for PBXNativeTarget "Watch" */;
+			buildPhases = (
+				4F5814B61D0A10E9001F014F /* Resources */,
+				4F5814D61D0A10E9001F014F /* Embed App Extensions */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				4F5814C71D0A10E9001F014F /* PBXTargetDependency */,
+			);
+			name = Watch;
+			productName = Watch;
+			productReference = 4F5814B81D0A10E9001F014F /* Watch.app */;
+			productType = "com.apple.product-type.application.watchapp2";
+		};
+		4F5814C31D0A10E9001F014F /* Watch Extension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 4F5814D31D0A10E9001F014F /* Build configuration list for PBXNativeTarget "Watch Extension" */;
+			buildPhases = (
+				4F5814C01D0A10E9001F014F /* Sources */,
+				4F5814C11D0A10E9001F014F /* Frameworks */,
+				4F5814C21D0A10E9001F014F /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "Watch Extension";
+			productName = "Watch Extension";
+			productReference = 4F5814C41D0A10E9001F014F /* Watch Extension.appex */;
+			productType = "com.apple.product-type.watchkit2-extension";
+		};
 		4FC2AA251B5E651E0000FC86 /* Recordari */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 4FC2AA471B5E651E0000FC86 /* Build configuration list for PBXNativeTarget "Recordari" */;
@@ -142,10 +267,12 @@
 				4FC2AA221B5E651E0000FC86 /* Sources */,
 				4FC2AA231B5E651E0000FC86 /* Frameworks */,
 				4FC2AA241B5E651E0000FC86 /* Resources */,
+				4F5814DA1D0A10E9001F014F /* Embed Watch Content */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				4F5814D11D0A10E9001F014F /* PBXTargetDependency */,
 			);
 			name = Recordari;
 			productName = Recordari;
@@ -181,6 +308,14 @@
 				LastUpgradeCheck = 0730;
 				ORGANIZATIONNAME = "Bruno Bernardino";
 				TargetAttributes = {
+					4F5814B71D0A10E9001F014F = {
+						CreatedOnToolsVersion = 7.3.1;
+						DevelopmentTeam = BR4RWWLMM9;
+					};
+					4F5814C31D0A10E9001F014F = {
+						CreatedOnToolsVersion = 7.3.1;
+						DevelopmentTeam = BR4RWWLMM9;
+					};
 					4FC2AA251B5E651E0000FC86 = {
 						CreatedOnToolsVersion = 6.4;
 						DevelopmentTeam = BR4RWWLMM9;
@@ -211,11 +346,30 @@
 			targets = (
 				4FC2AA251B5E651E0000FC86 /* Recordari */,
 				4FC2AA3C1B5E651E0000FC86 /* RecordariTests */,
+				4F5814B71D0A10E9001F014F /* Watch */,
+				4F5814C31D0A10E9001F014F /* Watch Extension */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		4F5814B61D0A10E9001F014F /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4F5814BE1D0A10E9001F014F /* Assets.xcassets in Resources */,
+				4F5814BC1D0A10E9001F014F /* Interface.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4F5814C21D0A10E9001F014F /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4F5814CE1D0A10E9001F014F /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		4FC2AA241B5E651E0000FC86 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -235,6 +389,16 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		4F5814C01D0A10E9001F014F /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4F5814CC1D0A10E9001F014F /* ExtensionDelegate.swift in Sources */,
+				4F5814CA1D0A10E9001F014F /* InterfaceController.swift in Sources */,
+				4F5814DE1D0A16EE001F014F /* EventsTableRowController.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		4FC2AA221B5E651E0000FC86 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -256,12 +420,23 @@
 			buildActionMask = 2147483647;
 			files = (
 				4FC2AA441B5E651E0000FC86 /* RecordariTests.swift in Sources */,
+				4F5814E01D0A2F25001F014F /* MainViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		4F5814C71D0A10E9001F014F /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 4F5814C31D0A10E9001F014F /* Watch Extension */;
+			targetProxy = 4F5814C61D0A10E9001F014F /* PBXContainerItemProxy */;
+		};
+		4F5814D11D0A10E9001F014F /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 4F5814B71D0A10E9001F014F /* Watch */;
+			targetProxy = 4F5814D01D0A10E9001F014F /* PBXContainerItemProxy */;
+		};
 		4FC2AA3F1B5E651E0000FC86 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 4FC2AA251B5E651E0000FC86 /* Recordari */;
@@ -270,6 +445,14 @@
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
+		4F5814BA1D0A10E9001F014F /* Interface.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				4F5814BB1D0A10E9001F014F /* Base */,
+			);
+			name = Interface.storyboard;
+			sourceTree = "<group>";
+		};
 		4FC2AA311B5E651E0000FC86 /* Main.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (
@@ -281,6 +464,78 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
+		4F5814D41D0A10E9001F014F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				INFOPLIST_FILE = "Watch Extension/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.emotionloop.Recordari.watchkitapp.watchkitextension;
+				PRODUCT_NAME = "${TARGET_NAME}";
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = 4;
+				WATCHOS_DEPLOYMENT_TARGET = 2.2;
+			};
+			name = Debug;
+		};
+		4F5814D51D0A10E9001F014F /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				INFOPLIST_FILE = "Watch Extension/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.emotionloop.Recordari.watchkitapp.watchkitextension;
+				PRODUCT_NAME = "${TARGET_NAME}";
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = 4;
+				WATCHOS_DEPLOYMENT_TARGET = 2.2;
+			};
+			name = Release;
+		};
+		4F5814D81D0A10E9001F014F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ANALYZER_NONNULL = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				EMBEDDED_CONTENT_CONTAINS_SWIFT = YES;
+				IBSC_MODULE = Watch_Extension;
+				INFOPLIST_FILE = Watch/Info.plist;
+				PRODUCT_BUNDLE_IDENTIFIER = com.emotionloop.Recordari.watchkitapp;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = 4;
+				WATCHOS_DEPLOYMENT_TARGET = 2.2;
+			};
+			name = Debug;
+		};
+		4F5814D91D0A10E9001F014F /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ANALYZER_NONNULL = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				EMBEDDED_CONTENT_CONTAINS_SWIFT = YES;
+				IBSC_MODULE = Watch_Extension;
+				INFOPLIST_FILE = Watch/Info.plist;
+				PRODUCT_BUNDLE_IDENTIFIER = com.emotionloop.Recordari.watchkitapp;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = 4;
+				WATCHOS_DEPLOYMENT_TARGET = 2.2;
+			};
+			name = Release;
+		};
 		4FC2AA451B5E651E0000FC86 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -372,6 +627,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				INFOPLIST_FILE = Recordari/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.emotionloop.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -389,6 +645,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				INFOPLIST_FILE = Recordari/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.emotionloop.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -436,6 +693,22 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		4F5814D31D0A10E9001F014F /* Build configuration list for PBXNativeTarget "Watch Extension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4F5814D41D0A10E9001F014F /* Debug */,
+				4F5814D51D0A10E9001F014F /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+		4F5814D71D0A10E9001F014F /* Build configuration list for PBXNativeTarget "Watch" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4F5814D81D0A10E9001F014F /* Debug */,
+				4F5814D91D0A10E9001F014F /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
 		4FC2AA211B5E651E0000FC86 /* Build configuration list for PBXProject "Recordari" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

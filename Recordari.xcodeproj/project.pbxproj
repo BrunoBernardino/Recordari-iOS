@@ -700,6 +700,7 @@
 				4F5814D51D0A10E9001F014F /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		4F5814D71D0A10E9001F014F /* Build configuration list for PBXNativeTarget "Watch" */ = {
 			isa = XCConfigurationList;
@@ -708,6 +709,7 @@
 				4F5814D91D0A10E9001F014F /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		4FC2AA211B5E651E0000FC86 /* Build configuration list for PBXProject "Recordari" */ = {
 			isa = XCConfigurationList;

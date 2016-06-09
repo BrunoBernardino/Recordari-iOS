@@ -23,7 +23,7 @@ class EventBoxView: UIView {
         self.bottomOffset = bottomOffset
     }
     
-    required init(coder decoder: NSCoder) {
+    required init?(coder decoder: NSCoder) {
         super.init(coder:decoder)
     }
 
@@ -58,6 +58,11 @@ class EventBoxView: UIView {
         
         self.layer.borderColor = UIColor(red: 0, green: 0, blue: 0, alpha: 0.1).CGColor
         self.layer.borderWidth = 0.5
+        
+        // Autolayout weirdness?
+        if (self.layer.frame.width > 195) {
+            self.layer.position.x -= 4
+        }
         
         self.addSubview(self.button)
     }

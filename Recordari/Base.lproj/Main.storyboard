@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="7706" systemVersion="14E46" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="49e-Tb-3d3">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="10117" systemVersion="15E65" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="49e-Tb-3d3">
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="7703"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="10085"/>
         <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
     </dependencies>
     <scenes>
@@ -18,7 +18,7 @@
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="gBm-Ng-ZpC">
+                            <view contentMode="scaleToFill" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="gBm-Ng-ZpC">
                                 <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                             </view>
@@ -150,9 +150,10 @@
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <prototypes>
                                     <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="eventCell" id="rm0-qD-Fi4" customClass="EventTableCell" customModule="Recordari" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="0.0" width="600" height="44"/>
+                                        <rect key="frame" x="0.0" y="22" width="600" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" tableViewCell="rm0-qD-Fi4" id="keV-X3-TM7">
+                                            <rect key="frame" x="0.0" y="0.0" width="600" height="43.5"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" misplaced="YES" text="Event Name" lineBreakMode="middleTruncation" baselineAdjustment="alignBaselines" minimumFontSize="11" translatesAutoresizingMaskIntoConstraints="NO" id="n01-rQ-KHM">
@@ -216,11 +217,15 @@
                             <constraint firstItem="Bs9-kW-2m3" firstAttribute="leading" secondItem="QS5-Rx-YEW" secondAttribute="leadingMargin" constant="-16" id="2Rw-fU-Kdt"/>
                             <constraint firstAttribute="trailingMargin" secondItem="Bs9-kW-2m3" secondAttribute="trailing" constant="-16" id="3mt-lz-PGR"/>
                             <constraint firstAttribute="centerX" secondItem="kLS-YB-XUL" secondAttribute="centerX" id="5Ek-Hq-fhD"/>
+                            <constraint firstItem="zJH-tO-LUd" firstAttribute="leading" secondItem="cV0-27-v3v" secondAttribute="trailing" constant="8" id="6m6-Uu-GYz"/>
                             <constraint firstAttribute="trailingMargin" secondItem="kLS-YB-XUL" secondAttribute="trailing" constant="-16" id="8hA-nt-Pxe"/>
                             <constraint firstItem="R90-By-ubJ" firstAttribute="leading" secondItem="8aL-hf-vRk" secondAttribute="trailing" constant="18" id="Gfu-vw-uyl"/>
+                            <constraint firstItem="R90-By-ubJ" firstAttribute="leading" secondItem="8aL-hf-vRk" secondAttribute="trailing" constant="18" id="MvY-GL-rCn"/>
+                            <constraint firstItem="cV0-27-v3v" firstAttribute="leading" secondItem="QS5-Rx-YEW" secondAttribute="leadingMargin" constant="-4" id="Sv0-p5-rra"/>
                             <constraint firstItem="kLS-YB-XUL" firstAttribute="leading" secondItem="QS5-Rx-YEW" secondAttribute="leadingMargin" constant="-16" id="ULi-DT-pl7"/>
                             <constraint firstItem="zJH-tO-LUd" firstAttribute="leading" secondItem="cV0-27-v3v" secondAttribute="trailing" constant="8" id="dDz-8M-sKn"/>
                             <constraint firstItem="R90-By-ubJ" firstAttribute="trailing" secondItem="QS5-Rx-YEW" secondAttribute="trailingMargin" id="iJC-67-lqF"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="R90-By-ubJ" secondAttribute="trailing" constant="-4" id="jdj-Ld-0TR"/>
                             <constraint firstItem="cV0-27-v3v" firstAttribute="leading" secondItem="QS5-Rx-YEW" secondAttribute="leadingMargin" id="nCV-aJ-0K3"/>
                             <constraint firstAttribute="centerX" secondItem="Bs9-kW-2m3" secondAttribute="centerX" id="x55-El-81e"/>
                         </constraints>

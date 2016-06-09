@@ -50,13 +50,13 @@ class SettingsViewController: UIViewController, MFMailComposeViewControllerDeleg
         self.view.frame.origin.y = 20// Move view to bottom
         
         // Create view for the notification
-        var toastView = UIView(frame: CGRectMake(0, -20, window.frame.size.width, 20))
+        let toastView = UIView(frame: CGRectMake(0, -20, window.frame.size.width, 20))
         
         // Set properties of the view
         toastView.backgroundColor = UIColor.blackColor()
         
         // Create label with text and properties
-        var labelView = UILabel(frame: CGRectMake(0, 0, window.frame.size.width, 20))
+        let labelView = UILabel(frame: CGRectMake(0, 0, window.frame.size.width, 20))
         labelView.text = message
         labelView.textColor = UIColor.whiteColor()
         labelView.textAlignment = NSTextAlignment.Center
@@ -107,9 +107,9 @@ class SettingsViewController: UIViewController, MFMailComposeViewControllerDeleg
     
         NSLog("Refreshing view settings")
         
-        var iCloudSettings: NSMutableDictionary = self.settings.objectForKey("iCloud")!.mutableCopy() as! NSMutableDictionary
+        let iCloudSettings: NSMutableDictionary = self.settings.objectForKey("iCloud")!.mutableCopy() as! NSMutableDictionary
         
-        var isiCloudEnabled: Bool = iCloudSettings.valueForKey("isEnabled")!.isEqual(true) ? true : false
+        let isiCloudEnabled: Bool = iCloudSettings.valueForKey("isEnabled")!.isEqual(true) ? true : false
     
         //NSLog(@"iCloud Settings = %@", iCloudSettings);
         
@@ -121,11 +121,11 @@ class SettingsViewController: UIViewController, MFMailComposeViewControllerDeleg
         }
         
         // Set sync text
-        var lastSyncStartDate: NSDate? = iCloudSettings.valueForKey("lastSyncStart") as! NSDate?
-        var lastSyncEndDate: NSDate? = iCloudSettings.valueForKey("lastSuccessfulSync") as! NSDate?
+        //var lastSyncStartDate: NSDate? = iCloudSettings.valueForKey("lastSyncStart") as! NSDate?
+        let lastSyncEndDate: NSDate? = iCloudSettings.valueForKey("lastSuccessfulSync") as! NSDate?
 
-        var dateFormatter: NSDateFormatter = NSDateFormatter()
-        var locale: NSLocale = NSLocale(localeIdentifier: "en_US")
+        let dateFormatter: NSDateFormatter = NSDateFormatter()
+        let locale: NSLocale = NSLocale(localeIdentifier: "en_US")
         dateFormatter.locale = locale
         dateFormatter.dateStyle = NSDateFormatterStyle.ShortStyle
         dateFormatter.dateFormat = NSLocalizedString("yyyy.MM.dd HH:mm", comment:"")
@@ -175,8 +175,8 @@ class SettingsViewController: UIViewController, MFMailComposeViewControllerDeleg
         
         var objects: NSArray
         
-        var error: NSError? = nil
-        objects = context!.executeFetchRequest(request, error: &error)!
+        let error: NSError? = nil
+        objects = try! context!.executeFetchRequest(request)
         
         if ( error != nil ) {
             objects = []
@@ -230,7 +230,7 @@ class SettingsViewController: UIViewController, MFMailComposeViewControllerDeleg
         
         NSLog("Refreshing view settings")
         
-        var iCloudSettings: NSMutableDictionary = self.settings.objectForKey("iCloud")!.mutableCopy() as! NSMutableDictionary
+        let iCloudSettings: NSMutableDictionary = self.settings.objectForKey("iCloud")!.mutableCopy() as! NSMutableDictionary
         
         if (switchView.on) {
             appDelegate.migrateDataToiCloud()
@@ -254,8 +254,8 @@ class SettingsViewController: UIViewController, MFMailComposeViewControllerDeleg
     
     // Export CSV button pressed
     @IBAction func exportCSVButtonPressed(sender: AnyObject) {
-        var textFileContentsString: NSString = self.getCSVFileString()
-        var textFileContentsData: NSData = textFileContentsString.dataUsingEncoding(NSASCIIStringEncoding)!
+        let textFileContentsString: NSString = self.getCSVFileString()
+        let textFileContentsData: NSData = textFileContentsString.dataUsingEncoding(NSASCIIStringEncoding)!
         
         let csvFileName = NSString(format:"recordari-export-%d.csv", Int(NSDate().timeIntervalSince1970)) as String
         
@@ -263,7 +263,7 @@ class SettingsViewController: UIViewController, MFMailComposeViewControllerDeleg
         let emailBody = NSLocalizedString("Enjoy this CSV file with my events data", comment:"")
         
         if (MFMailComposeViewController.canSendMail()) {
-            var mailComposeViewController = MFMailComposeViewController()
+            let mailComposeViewController = MFMailComposeViewController()
             mailComposeViewController.mailComposeDelegate = self
             mailComposeViewController.setSubject(emailSubject)
             mailComposeViewController.setMessageBody(emailBody, isHTML: false)
@@ -277,7 +277,7 @@ class SettingsViewController: UIViewController, MFMailComposeViewControllerDeleg
     }
     
     // Hide controller once email is sent
-    func mailComposeController(controller: MFMailComposeViewController!, didFinishWithResult result: MFMailComposeResult, error: NSError!) {
+    func mailComposeController(controller: MFMailComposeViewController, didFinishWithResult result: MFMailComposeResult, error: NSError?) {
         NSLog("Finished sending email!")
         self.dismissViewControllerAnimated(true, completion: nil)
     }
@@ -289,13 +289,13 @@ class SettingsViewController: UIViewController, MFMailComposeViewControllerDeleg
         let confirmRemove = UIAlertController( title: NSLocalizedString("Are you sure?", comment: ""), message: NSLocalizedString("This will remove all local & iCloud data for events", comment: ""), preferredStyle: UIAlertControllerStyle.Alert )
         
         // Confirmed!
-        confirmRemove.addAction(UIAlertAction(title: NSLocalizedString("Yes", comment: ""), style: .Default, handler: { (action: UIAlertAction!) in
+        confirmRemove.addAction(UIAlertAction(title: NSLocalizedString("Yes", comment: ""), style: .Default, handler: { (action: UIAlertAction) in
             appDelegate.removeAllData()
             self.showToast(NSLocalizedString("All data removed!", comment: ""), window: self.view.window!)
         }))
         
         // Canceled!
-        confirmRemove.addAction(UIAlertAction(title: NSLocalizedString("No", comment: ""), style: .Default, handler: { (action: UIAlertAction!) in
+        confirmRemove.addAction(UIAlertAction(title: NSLocalizedString("No", comment: ""), style: .Default, handler: { (action: UIAlertAction) in
             // Do nothing
         }))
         

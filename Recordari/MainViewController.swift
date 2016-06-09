@@ -36,28 +36,28 @@ class MainViewController: UIViewController {
         //
 
         // Main tab item
-        var mainIcon: UITabBarItem = self.tabBarController!.tabBar.items![0] as! UITabBarItem
+        let mainIcon: UITabBarItem = self.tabBarController!.tabBar.items![0] 
         
-        var unselectedMainImage: UIImage = UIImage(named: "main-icon")!
-        var selectedMainImage: UIImage = UIImage(named: "main-icon")!
+        let unselectedMainImage: UIImage = UIImage(named: "main-icon")!
+        let selectedMainImage: UIImage = UIImage(named: "main-icon")!
         
         mainIcon.image = unselectedMainImage.imageWithRenderingMode(UIImageRenderingMode.AlwaysOriginal)
         mainIcon.selectedImage = selectedMainImage
         
         // Events tab item
-        var eventsIcon: UITabBarItem = self.tabBarController!.tabBar.items![1] as! UITabBarItem
+        let eventsIcon: UITabBarItem = self.tabBarController!.tabBar.items![1] 
         
-        var unselectedEventsImage: UIImage = UIImage(named: "events-icon")!
-        var selectedEventsImage: UIImage = UIImage(named: "events-icon")!
+        let unselectedEventsImage: UIImage = UIImage(named: "events-icon")!
+        let selectedEventsImage: UIImage = UIImage(named: "events-icon")!
         
         eventsIcon.image = unselectedEventsImage.imageWithRenderingMode(UIImageRenderingMode.AlwaysOriginal)
         eventsIcon.selectedImage = selectedEventsImage
         
         // Settings tab item
-        var settingsIcon: UITabBarItem = self.tabBarController!.tabBar.items![2] as! UITabBarItem
+        let settingsIcon: UITabBarItem = self.tabBarController!.tabBar.items![2] 
         
-        var unselectedSettingsImage: UIImage = UIImage(named: "settings-icon")!
-        var selectedSettingsImage: UIImage = UIImage(named: "settings-icon")!
+        let unselectedSettingsImage: UIImage = UIImage(named: "settings-icon")!
+        let selectedSettingsImage: UIImage = UIImage(named: "settings-icon")!
         
         settingsIcon.image = unselectedSettingsImage.imageWithRenderingMode(UIImageRenderingMode.AlwaysOriginal)
         settingsIcon.selectedImage = selectedSettingsImage
@@ -73,17 +73,19 @@ class MainViewController: UIViewController {
         
         // If we already added the views, remove everything first
         if (self.addedEventView) {
-            self.boxesView.subviews.map({ $0.removeFromSuperview() })
+            for view in self.boxesView.subviews {
+                view.removeFromSuperview()
+            }
         }
         
         //NSLog("Writing views")
         
         // Add "Log New Event" view top the top left, make sure it's half the width and a third of the height.
-        var logNewEventView = self.createEventBoxView(0, colIndex: 0)
+        let logNewEventView = self.createEventBoxView(0, colIndex: 0)
         logNewEventView.buttonText = NSLocalizedString("Log New Event", comment: "")
         logNewEventView.showButton()
         logNewEventView.button.setTitleColor(UIColor(red: 255/255.0, green: 20/255.0, blue: 168/255.0, alpha: 1), forState: UIControlState.Normal)
-        logNewEventView.button.addTarget(self, action: "addEvent:", forControlEvents: UIControlEvents.TouchUpInside)
+        logNewEventView.button.addTarget(self, action: #selector(MainViewController.addEvent(_:)), forControlEvents: UIControlEvents.TouchUpInside)
 
         self.boxesView.addSubview(logNewEventView)
         
@@ -125,15 +127,15 @@ class MainViewController: UIViewController {
                     continue
             }
 
-            var topEventView = self.createEventBoxView(rowIndex, colIndex: colIndex)
+            let topEventView = self.createEventBoxView(rowIndex, colIndex: colIndex)
             topEventView.buttonText = topEvent.valueForKey("name") as! String
             topEventView.name = topEvent.valueForKey("name") as! String
             topEventView.showButton()
-            topEventView.button.addTarget(self, action: "addEvent:", forControlEvents: UIControlEvents.TouchUpInside)
+            topEventView.button.addTarget(self, action: #selector(MainViewController.addEvent(_:)), forControlEvents: UIControlEvents.TouchUpInside)
 
             self.boxesView.addSubview(topEventView)
             
-            ++numberOfItem
+            numberOfItem += 1
         }
         
         // Add "blank" events to log
@@ -167,19 +169,30 @@ class MainViewController: UIViewController {
                     continue
             }
 
-            var blankEventView = self.createEventBoxView(rowIndex, colIndex: colIndex)
+            let blankEventView = self.createEventBoxView(rowIndex, colIndex: colIndex)
             blankEventView.showButton()
-            blankEventView.button.addTarget(self, action: "addEvent:", forControlEvents: UIControlEvents.TouchUpInside)
+            blankEventView.button.addTarget(self, action: #selector(MainViewController.addEvent(_:)), forControlEvents: UIControlEvents.TouchUpInside)
             self.boxesView.addSubview(blankEventView)
 
-            --countOfBlankEvents
-            ++numberOfItem
+            countOfBlankEvents -= 1
+            numberOfItem += 1
         }
         
         // Add white bar view to hide the divider behind the status bar
-        var blankView: UIView = UIView(frame: CGRectMake(0, 0, self.boxesView.frame.width, 20))
+        let blankView: UIView = UIView(frame: CGRectMake(0, 0, self.boxesView.frame.width, 20))
         blankView.backgroundColor = UIColor.whiteColor()
         self.boxesView.addSubview(blankView)
+        
+        // Add white bar on the sides, to hide grey ones due to AutoLayout
+        if (self.addedEventView && self.boxesView.frame.width > 391) {
+            let leftBlankView: UIView = UIView(frame: CGRectMake(0, 0, 1, self.boxesView.frame.height))
+            leftBlankView.backgroundColor = UIColor.whiteColor()
+            self.boxesView.addSubview(leftBlankView)
+            
+            let rightBlankView: UIView = UIView(frame: CGRectMake(self.boxesView.frame.width - 1, 0, 1, self.boxesView.frame.height))
+            rightBlankView.backgroundColor = UIColor.whiteColor()
+            self.boxesView.addSubview(rightBlankView)
+        }
         
         // Mark flag
         self.addedEventView = true
@@ -193,7 +206,7 @@ class MainViewController: UIViewController {
     
     // Create Event Box view
     func createEventBoxView(rowIndex: CGFloat, colIndex: CGFloat) -> EventBoxView {
-        let tabBarHeight: CGFloat = self.tabBarController!.tabBar.frame.size.height
+        //let tabBarHeight: CGFloat = self.tabBarController!.tabBar.frame.size.height
         let statusBarHeight: CGFloat = 20
         
         let originX: CGFloat = self.boxesView.frame.origin.x
@@ -256,8 +269,8 @@ class MainViewController: UIViewController {
         
         var objects: NSArray
         
-        var error: NSError? = nil
-        objects = context!.executeFetchRequest(request, error: &error)!
+        let error: NSError? = nil
+        objects = try! context!.executeFetchRequest(request)
         
         if ( error != nil ) {
             objects = []
@@ -280,7 +293,7 @@ class MainViewController: UIViewController {
     
     // A log button was pressed
     func addEvent(sender: UIButton!) {
-        var eventBoxView: EventBoxView = sender.superview! as! EventBoxView
+        let eventBoxView: EventBoxView = sender.superview! as! EventBoxView
         
         //NSLog("Event Name = %@", eventBoxView.name)
         
@@ -295,8 +308,8 @@ class MainViewController: UIViewController {
         let context = appDelegate.managedObjectContext
         
         // Set defaults
-        var eventName: NSString = eventBoxView.name
-        var eventDate: NSDate = NSDate()// Event date will be now
+        let eventName: NSString = eventBoxView.name
+        let eventDate: NSDate = NSDate()// Event date will be now
         
         //NSLog("VALUES = %@, %@", eventName, eventDate)
         
@@ -319,12 +332,16 @@ class MainViewController: UIViewController {
         // Save object
         //
         
-        let newEvent: NSManagedObject = NSEntityDescription.insertNewObjectForEntityForName("Event", inManagedObjectContext: context!) as! NSManagedObject
+        let newEvent: NSManagedObject = NSEntityDescription.insertNewObjectForEntityForName("Event", inManagedObjectContext: context!) 
         newEvent.setValue(eventName, forKey: "name")
         newEvent.setValue(eventDate, forKey: "date")
         
         var error: NSError? = nil
-        context?.save(&error)
+        do {
+            try context?.save()
+        } catch let error1 as NSError {
+            error = error1
+        }
         
         if (error == nil) {
             // Show toast
@@ -361,13 +378,13 @@ class MainViewController: UIViewController {
         self.setNeedsStatusBarAppearanceUpdate()
         
         // Create view for the notification
-        var toastView = UIView(frame: CGRectMake(0, -20, window.frame.size.width, 20))
+        let toastView = UIView(frame: CGRectMake(0, -20, window.frame.size.width, 20))
         
         // Set properties of the view
         toastView.backgroundColor = UIColor.blackColor()
         
         // Create label with text and properties
-        var labelView = UILabel(frame: CGRectMake(0, 0, window.frame.size.width, 20))
+        let labelView = UILabel(frame: CGRectMake(0, 0, window.frame.size.width, 20))
         labelView.text = message
         labelView.textColor = UIColor.whiteColor()
         labelView.textAlignment = NSTextAlignment.Center

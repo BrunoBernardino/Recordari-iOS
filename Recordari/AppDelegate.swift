@@ -27,10 +27,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         self.window!.tintColor = UIColor(red: 255/255.0, green: 20/255.0, blue: 168/255.0, alpha: 1)
         
         // Listen for iCloud changes (when they will happen)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "iCloudWillUpdate:", name: NSPersistentStoreCoordinatorStoresWillChangeNotification, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(AppDelegate.iCloudWillUpdate(_:)), name: NSPersistentStoreCoordinatorStoresWillChangeNotification, object: nil)
         
         // Listen for iCloud changes (after it's done)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "iCloudDidUpdate:", name: NSPersistentStoreCoordinatorStoresDidChangeNotification, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(AppDelegate.iCloudDidUpdate(_:)), name: NSPersistentStoreCoordinatorStoresDidChangeNotification, object: nil)
 
         return true
     }
@@ -90,25 +90,25 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let nc = NSNotificationCenter.defaultCenter();
         nc.addObserver(
             self,
-            selector: "storesWillChange:",
+            selector: #selector(AppDelegate.storesWillChange(_:)),
             name: NSPersistentStoreCoordinatorStoresWillChangeNotification,
             object: psc);
         
         nc.addObserver(
             self,
-            selector: "storesDidChange:",
+            selector: #selector(AppDelegate.storesDidChange(_:)),
             name: NSPersistentStoreCoordinatorStoresDidChangeNotification,
             object: psc);
         
         nc.addObserver(
             self,
-            selector: "persistentStoreDidImportUbiquitousContentChanges:",
+            selector: #selector(AppDelegate.persistentStoreDidImportUbiquitousContentChanges(_:)),
             name: NSPersistentStoreDidImportUbiquitousContentChangesNotification,
             object: psc);
         
         nc.addObserver(
             self,
-            selector: "mergeChanges:",
+            selector: #selector(AppDelegate.mergeChanges(_:)),
             name: NSManagedObjectContextDidSaveNotification,
             object: psc);
     }
@@ -135,17 +135,20 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         NSLog("storesWillChange notif:\(notification)");
         if let moc = self.managedObjectContext {
             moc.performBlockAndWait {
-                var error: NSError? = nil;
-                if moc.hasChanges && !moc.save(&error) {
+                do {
+                    if moc.hasChanges {
+                        try moc.save()
+                    } else {
+                        // drop any managed objects
+                    }
+                
+                    // Reset context anyway, as suggested by Apple Support
+                    // The reason is that when storesWillChange notification occurs, Core Data is going to switch the stores. During and after that switch (happening in background), your currently fetched objects will become invalid.
+                
+                    moc.reset();
+                } catch {
                     NSLog("Save error: \(error)");
-                } else {
-                    // drop any managed objects
                 }
-                
-                // Reset context anyway, as suggested by Apple Support
-                // The reason is that when storesWillChange notification occurs, Core Data is going to switch the stores. During and after that switch (happening in background), your currently fetched objects will become invalid.
-                
-                moc.reset();
             }
             
             // now reset your UI to be prepared for a totally different
@@ -173,7 +176,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     lazy var applicationDocumentsDirectory: NSURL = {
         // The directory the application uses to store the Core Data store file. This code uses a directory named "hyouuu.pendo" in the application's documents Application Support directory.
         let urls = NSFileManager.defaultManager().URLsForDirectory(.DocumentDirectory, inDomains: .UserDomainMask)
-        return urls[urls.count-1] as! NSURL
+        return urls[urls.count-1] 
         }()
     
     lazy var managedObjectModel: NSManagedObjectModel = {
@@ -191,13 +194,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         NSLog("storeURL:\(url)")
         var error: NSError? = nil
         var failureReason = "There was an error creating or loading the application's saved data."
-        if coordinator!.addPersistentStoreWithType(
-            NSSQLiteStoreType,
-            configuration: nil,
-            URL: url,
-            options: [NSPersistentStoreUbiquitousContentNameKey : "Recordari"],
-            error: &error) == nil
-        {
+        do {
+            try coordinator!.addPersistentStoreWithType(
+                        NSSQLiteStoreType,
+                        configuration: nil,
+                        URL: url,
+                        options: [NSPersistentStoreUbiquitousContentNameKey : "Recordari"])
+        } catch var error1 as NSError {
+            error = error1
             coordinator = nil
             // Report any error we got.
             let dict = NSMutableDictionary()
@@ -208,6 +212,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             // Replace this with code to handle the error appropriately.
             // abort() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
             NSLog("AddPersistentStore error \(error), \(error!.userInfo)")
+        } catch {
+            fatalError()
         }
         
         self.observeCloudActions(persistentStoreCoordinator: coordinator)
@@ -232,10 +238,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func saveContext () {
         if let moc = self.managedObjectContext {
             var error: NSError? = nil
-            if moc.hasChanges && !moc.save(&error) {
-                // Replace this implementation with code to handle the error appropriately.
-                // abort() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
-                NSLog("Unresolved error \(error), \(error!.userInfo)")
+            if moc.hasChanges {
+                do {
+                    try moc.save()
+                } catch let error1 as NSError {
+                    error = error1
+                    // Replace this implementation with code to handle the error appropriately.
+                    // abort() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
+                    NSLog("Unresolved error \(error), \(error!.userInfo)")
+                }
             }
         }
     }
@@ -248,7 +259,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
         // iCloud sync
         if (self.settings.objectForKey("iCloud") == nil) {
-            var defaultiCloud: NSMutableDictionary = NSMutableDictionary(capacity: 5)
+            let defaultiCloud: NSMutableDictionary = NSMutableDictionary(capacity: 5)
             
             defaultiCloud.setValue(false, forKey: "isEnabled")
             defaultiCloud.setValue(nil, forKey: "lastSyncStart")// Last time a sync was started from the app
@@ -290,15 +301,21 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
         if (newStore != nil) {
             var error: NSError? = nil
-            self.persistentStoreCoordinator!.removePersistentStore(newStore!, error: &error)
+            do {
+                try self.persistentStoreCoordinator!.removePersistentStore(newStore!)
+            } catch let error1 as NSError {
+                error = error1
+            }
             if (error != nil) {
-                NSLog("Unresolved error while removing persistent store %@, %@", error!, error!.userInfo!)
+                NSLog("Unresolved error while removing persistent store %@, %@", error!, error!.userInfo)
             }
         }
         
-        var error: NSError? = nil
-        
-        self.persistentStoreCoordinator!.addPersistentStoreWithType(NSSQLiteStoreType, configuration: nil, URL: self.currentStoreURL(), options: self.storeOptions as? [NSObject : AnyObject], error: &error)
+        do {
+            try self.persistentStoreCoordinator!.addPersistentStoreWithType(NSSQLiteStoreType, configuration: nil, URL: self.currentStoreURL(), options: self.storeOptions as? [NSObject : AnyObject])
+        } catch {
+            print("Error %@", error)
+        }
     }
     
     // Update iCloud start sync date
@@ -308,7 +325,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             self.synchronizeSettings()
         }
         
-        var iCloudSettings: NSMutableDictionary = self.settings.objectForKey("iCloud")!.mutableCopy() as! NSMutableDictionary
+        let iCloudSettings: NSMutableDictionary = self.settings.objectForKey("iCloud")!.mutableCopy() as! NSMutableDictionary
     
         NSLog("Set the sync start date to now")
     
@@ -325,7 +342,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             self.synchronizeSettings()
         }
         
-        var iCloudSettings: NSMutableDictionary = self.settings.objectForKey("iCloud")!.mutableCopy() as! NSMutableDictionary
+        let iCloudSettings: NSMutableDictionary = self.settings.objectForKey("iCloud")!.mutableCopy() as! NSMutableDictionary
         
         NSLog("Set the sync end date to now")
         
@@ -339,16 +356,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func migrateDataToiCloud() {
         NSLog("Migrating data to iCloud")
         
-        var tmpStoreOptions: NSMutableDictionary = self.storeOptions.mutableCopy() as! NSMutableDictionary
+        let tmpStoreOptions: NSMutableDictionary = self.storeOptions.mutableCopy() as! NSMutableDictionary
         
         tmpStoreOptions.setObject(true, forKey: NSPersistentStoreRemoveUbiquitousMetadataOption)
         
         //var store: NSPersistentStore = self.persistentStoreCoordinator!.persistentStoreForURL(self.currentStoreURL())!
         
-        var error: NSError? = nil
-        
         //var tmpStore: NSPersistentStore = self.persistentStoreCoordinator!.migratePersistentStore(store, toURL: self.currentStoreURL(), options: self.storeOptions as? [NSObject : AnyObject], withType: NSSQLiteStoreType, error: &error)!
-        var tmpStore: NSPersistentStore? = nil
+        let tmpStore: NSPersistentStore? = nil
     
         // Update store options for reload
         self.storeOptions = self.iCloudStoreOptions()
@@ -356,7 +371,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Reload store
         self.reloadWithNewStore(tmpStore)
         
-        var iCloudSettings: NSMutableDictionary = self.settings.objectForKey("iCloud")!.mutableCopy() as! NSMutableDictionary
+        let iCloudSettings: NSMutableDictionary = self.settings.objectForKey("iCloud")!.mutableCopy() as! NSMutableDictionary
     
         NSLog("Set the last remote sync date to now")
     
@@ -370,16 +385,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func migrateDataToLocal() {
         NSLog("Migrating data to Local")
         
-        var tmpStoreOptions: NSMutableDictionary = self.storeOptions.mutableCopy() as! NSMutableDictionary
+        let tmpStoreOptions: NSMutableDictionary = self.storeOptions.mutableCopy() as! NSMutableDictionary
         
         tmpStoreOptions.setObject(true, forKey: NSPersistentStoreRemoveUbiquitousMetadataOption)
         
         //var store: NSPersistentStore = self.persistentStoreCoordinator!.persistentStoreForURL(self.currentStoreURL())!
         
-        var error: NSError? = nil
-        
         //var tmpStore: NSPersistentStore = self.persistentStoreCoordinator!.migratePersistentStore(store, toURL: self.currentStoreURL(), options: self.storeOptions as? [NSObject : AnyObject], withType: NSSQLiteStoreType, error: &error)!
-        var tmpStore: NSPersistentStore? = nil
+        let tmpStore: NSPersistentStore? = nil
         
         // Update store options for reload
         self.storeOptions = self.localStoreOptions()
@@ -387,7 +400,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Reload store
         self.reloadWithNewStore(tmpStore)
         
-        var iCloudSettings: NSMutableDictionary = self.settings.objectForKey("iCloud")!.mutableCopy() as! NSMutableDictionary
+        let iCloudSettings: NSMutableDictionary = self.settings.objectForKey("iCloud")!.mutableCopy() as! NSMutableDictionary
         
         NSLog("Set the last local sync date to now")
         
@@ -405,23 +418,27 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let context = appDelegate.managedObjectContext
         
         // Remove all events
-        var entityDesc = NSEntityDescription.entityForName("Event", inManagedObjectContext:context!)
+        let entityDesc = NSEntityDescription.entityForName("Event", inManagedObjectContext:context!)
         
-        var request = NSFetchRequest()
+        let request = NSFetchRequest()
         request.entity = entityDesc
         
         var objects: [NSManagedObject]
         
         var error: NSError? = nil
         
-        objects = context!.executeFetchRequest(request, error: &error) as! [NSManagedObject]
+        objects = (try! context!.executeFetchRequest(request)) as! [NSManagedObject]
         
         if ( error == nil ) {
             for object: NSManagedObject in objects {
                 context?.deleteObject(object)
             }
             
-            context?.save(&error)
+            do {
+                try context?.save()
+            } catch let error1 as NSError {
+                error = error1
+            }
         } else {
             NSLog("Error: %@", error!)
         }

@@ -25,7 +25,7 @@ class EditEventViewController: UIViewController, UITextFieldDelegate {
         self.nameTextField.delegate = self
         
         // Fill up the fields with the data sent over
-        self.nameTextField.text = self.selectedEvent.valueForKey("name") as! String
+        self.nameTextField.text = self.selectedEvent.valueForKey("name") as? String
         self.datePicker.date = self.selectedEvent.valueForKey("date") as! NSDate
     }
 
@@ -80,7 +80,11 @@ class EditEventViewController: UIViewController, UITextFieldDelegate {
         self.selectedEvent!.setValue(eventDate, forKey: "date")
         
         var error: NSError? = nil
-        context?.save(&error)
+        do {
+            try context?.save()
+        } catch let error1 as NSError {
+            error = error1
+        }
         
         if (error == nil) {
             // Show toast
@@ -105,7 +109,7 @@ class EditEventViewController: UIViewController, UITextFieldDelegate {
     }
 
     // Dismiss keyboard on touch outside
-    override func touchesBegan(touches: Set<NSObject>, withEvent event: UIEvent) {
+    override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
         self.nameTextField.endEditing(true)
     }
     

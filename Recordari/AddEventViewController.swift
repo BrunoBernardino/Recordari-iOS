@@ -70,12 +70,16 @@ class AddEventViewController: UIViewController, UITextFieldDelegate {
         // Save object
         //
         
-        let newEvent: NSManagedObject = NSEntityDescription.insertNewObjectForEntityForName("Event", inManagedObjectContext: context!) as! NSManagedObject
+        let newEvent: NSManagedObject = NSEntityDescription.insertNewObjectForEntityForName("Event", inManagedObjectContext: context!) 
         newEvent.setValue(eventName, forKey: "name")
         newEvent.setValue(eventDate, forKey: "date")
         
         var error: NSError? = nil
-        context?.save(&error)
+        do {
+            try context?.save()
+        } catch let error1 as NSError {
+            error = error1
+        }
         
         if (error == nil) {
             // Cleanup fields
@@ -101,7 +105,7 @@ class AddEventViewController: UIViewController, UITextFieldDelegate {
     }
 
     // Dismiss keyboard on touch outside
-    override func touchesBegan(touches: Set<NSObject>, withEvent event: UIEvent) {
+    override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
         self.nameTextField.endEditing(true)
     }
     

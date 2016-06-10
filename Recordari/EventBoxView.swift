@@ -54,7 +54,11 @@ class EventBoxView: UIView {
         }
         
         self.button.clipsToBounds = true
-        self.button.titleLabel?.font = UIFont.systemFontOfSize(16, weight: UIFontWeightLight)
+        if #available(iOS 8.2, *) {
+            self.button.titleLabel?.font = UIFont.systemFontOfSize(16, weight: UIFontWeightLight)
+        } else {
+            // Fallback on earlier versions
+        }
         
         self.layer.borderColor = UIColor(red: 0, green: 0, blue: 0, alpha: 0.1).CGColor
         self.layer.borderWidth = 0.5

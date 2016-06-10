@@ -16,8 +16,6 @@ class MainViewController: UIViewController, WCSessionDelegate {
     
     var statusBarShowing: Bool = true
     
-    var watchSession: WCSession!
-    
     @IBOutlet weak var boxesView: UIView!
 
     override func viewDidLoad() {
@@ -64,6 +62,11 @@ class MainViewController: UIViewController, WCSessionDelegate {
         
         settingsIcon.image = unselectedSettingsImage.imageWithRenderingMode(UIImageRenderingMode.AlwaysOriginal)
         settingsIcon.selectedImage = selectedSettingsImage
+        
+        // Initialize Watch Session
+        if #available(iOS 9.0, *) {
+            self.initializeWatchSession()
+        }
     }
 
     override func didReceiveMemoryWarning() {
@@ -94,16 +97,6 @@ class MainViewController: UIViewController, WCSessionDelegate {
         
         // Fetch popular events
         let topEvents = self.getTopEvents()
-        
-        // Send top events to watch app
-        NSLog("SENDING DATA TO WATCH")
-        do {
-            try self.watchSession?.updateApplicationContext(
-                ["topEvents" : topEvents]
-            )
-        } catch let error as NSError {
-            NSLog("Updating the context failed: " + error.localizedDescription)
-        }
         
         let countOfTopEvents = topEvents.count
         
@@ -376,12 +369,14 @@ class MainViewController: UIViewController, WCSessionDelegate {
     
     // Show alert modal
     func showAlert(message: String) {
-        let alertController = UIAlertController(title: "Recordari", message:
-            message, preferredStyle: UIAlertControllerStyle.Alert)
-        
-        alertController.addAction(UIAlertAction(title: NSLocalizedString("OK", comment:""), style: UIAlertActionStyle.Default,handler: nil))
-        
-        self.presentViewController(alertController, animated: true, completion: nil)
+        if #available(iOS 8.0, *) {
+            let alertController = UIAlertController(title: "Recordari", message:
+                message, preferredStyle: UIAlertControllerStyle.Alert)
+            
+            alertController.addAction(UIAlertAction(title: NSLocalizedString("OK", comment:""), style: UIAlertActionStyle.Default,handler: nil))
+            
+            self.presentViewController(alertController, animated: true, completion: nil)
+        }
     }
     
     // Show "toast"
@@ -435,14 +430,52 @@ class MainViewController: UIViewController, WCSessionDelegate {
         )
     }
     
-    // Receive message from the watch to add event
-    func session(session: WCSession, didReceiveMessage message: [String : AnyObject], replyHandler: ([String : AnyObject]) -> Void) {
-        let newEvent : String = message["event"] as! String
-        NSLog("RECEIVED NEW EVENT TO ADD: %@", newEvent)
+    func getSimpleTopEvents() -> Array<String> {
+        let topEvents = self.getTopEvents()
 
-        self.addQuickEvent(newEvent)
+        var simpleEvents: Array<String> = []
         
-        replyHandler(["status": "OK"])
+        let arrayEvents = topEvents as Array<AnyObject>
+        
+        // Simplify topEvents
+        for event in arrayEvents {
+            simpleEvents.append(event.valueForKey("name") as! String)
+        }
+        
+        return simpleEvents
+    }
+    
+    // Initialize Watch Session
+    @available(iOS 9.0, *)
+    func initializeWatchSession() {
+        if (WCSession.isSupported()) {
+            let watchSession = WCSession.defaultSession()
+            watchSession.delegate = self
+            watchSession.activateSession()
+        }
+    }
+    
+    // Receive message from the watch to add event
+    @available(iOS 9.0, *)
+    func session(session: WCSession, didReceiveMessage message: [String : AnyObject], replyHandler: ([String : AnyObject]) -> Void) {
+        let newRequest : String? = message["request"] as? String
+        let newEvent : String? = message["event"] as? String
+
+        if newRequest == "topEvents" {
+            // The Watch is Requesting top events
+            NSLog("RECEIVED NEW REQUEST FOR TOP EVENTS")
+            
+            let simpleEvents = self.getSimpleTopEvents()
+            
+            replyHandler(["topEvents": simpleEvents])
+        } else {
+            // The watch is asking to add an event
+            NSLog("RECEIVED NEW EVENT TO ADD: %@", newEvent!)
+
+            self.addQuickEvent(newEvent!)
+            
+            replyHandler(["status": "OK"])
+        }
     }
     
     // Add a quick event

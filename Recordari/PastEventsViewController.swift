@@ -467,12 +467,14 @@ class PastEventsViewController: UIViewController, UITableViewDelegate, UITableVi
     
     // Show alert modal
     func showAlert(message: String) {
-        let alertController = UIAlertController(title: "Recordari", message:
-            message, preferredStyle: UIAlertControllerStyle.Alert)
-        
-        alertController.addAction(UIAlertAction(title: NSLocalizedString("OK", comment:""), style: UIAlertActionStyle.Default,handler: nil))
-        
-        self.presentViewController(alertController, animated: true, completion: nil)
+        if #available(iOS 8.0, *) {
+            let alertController = UIAlertController(title: "Recordari", message:
+                message, preferredStyle: UIAlertControllerStyle.Alert)
+            
+            alertController.addAction(UIAlertAction(title: NSLocalizedString("OK", comment:""), style: UIAlertActionStyle.Default,handler: nil))
+            
+            self.presentViewController(alertController, animated: true, completion: nil)
+        }
     }
     
     // Show "toast"

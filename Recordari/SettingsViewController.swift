@@ -34,12 +34,14 @@ class SettingsViewController: UIViewController, MFMailComposeViewControllerDeleg
     
     // Show alert modal
     func showAlert(message: String) {
-        let alertController = UIAlertController(title: "Recordari", message:
-            message, preferredStyle: UIAlertControllerStyle.Alert)
-        
-        alertController.addAction(UIAlertAction(title: NSLocalizedString("OK", comment:""), style: UIAlertActionStyle.Default,handler: nil))
-        
-        self.presentViewController(alertController, animated: true, completion: nil)
+        if #available(iOS 8.0, *) {
+            let alertController = UIAlertController(title: "Recordari", message:
+                message, preferredStyle: UIAlertControllerStyle.Alert)
+            
+            alertController.addAction(UIAlertAction(title: NSLocalizedString("OK", comment:""), style: UIAlertActionStyle.Default,handler: nil))
+            
+            self.presentViewController(alertController, animated: true, completion: nil)
+        }
     }
     
     // Show "toast"
@@ -286,20 +288,22 @@ class SettingsViewController: UIViewController, MFMailComposeViewControllerDeleg
     @IBAction func removeAllDataButtonPressed(sender: AnyObject) {
         let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
         
-        let confirmRemove = UIAlertController( title: NSLocalizedString("Are you sure?", comment: ""), message: NSLocalizedString("This will remove all local & iCloud data for events", comment: ""), preferredStyle: UIAlertControllerStyle.Alert )
-        
-        // Confirmed!
-        confirmRemove.addAction(UIAlertAction(title: NSLocalizedString("Yes", comment: ""), style: .Default, handler: { (action: UIAlertAction) in
-            appDelegate.removeAllData()
-            self.showToast(NSLocalizedString("All data removed!", comment: ""), window: self.view.window!)
-        }))
-        
-        // Canceled!
-        confirmRemove.addAction(UIAlertAction(title: NSLocalizedString("No", comment: ""), style: .Default, handler: { (action: UIAlertAction) in
-            // Do nothing
-        }))
-        
-        self.presentViewController(confirmRemove, animated: true, completion: nil)
+        if #available(iOS 8.0, *) {
+            let confirmRemove = UIAlertController( title: NSLocalizedString("Are you sure?", comment: ""), message: NSLocalizedString("This will remove all local & iCloud data for events", comment: ""), preferredStyle: UIAlertControllerStyle.Alert )
+            
+            // Confirmed!
+            confirmRemove.addAction(UIAlertAction(title: NSLocalizedString("Yes", comment: ""), style: .Default, handler: { (action: UIAlertAction) in
+                appDelegate.removeAllData()
+                self.showToast(NSLocalizedString("All data removed!", comment: ""), window: self.view.window!)
+            }))
+            
+            // Canceled!
+            confirmRemove.addAction(UIAlertAction(title: NSLocalizedString("No", comment: ""), style: .Default, handler: { (action: UIAlertAction) in
+                // Do nothing
+            }))
+            
+            self.presentViewController(confirmRemove, animated: true, completion: nil)
+        }
     }
     
 }

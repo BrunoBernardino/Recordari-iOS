@@ -16,7 +16,7 @@ class InterfaceController: WKInterfaceController, WCSessionDelegate {
     @IBOutlet var addLabel: WKInterfaceLabel!
     @IBOutlet var eventsTable: WKInterfaceTable!
     
-    var session: WCSession!
+    var watchSession: WCSession?
     var topEvents: Array<String>! = []
 
     override func awakeWithContext(context: AnyObject?) {
@@ -26,7 +26,7 @@ class InterfaceController: WKInterfaceController, WCSessionDelegate {
     }
     
     override func table(table: WKInterfaceTable, didSelectRowAtIndex rowIndex: Int) {
-        NSLog("CLICKED: %@", self.topEvents[rowIndex])
+        NSLog("TAPPED: %@", self.topEvents[rowIndex])
         self.addEvent(self.topEvents[rowIndex])
     }
 
@@ -35,9 +35,11 @@ class InterfaceController: WKInterfaceController, WCSessionDelegate {
         super.willActivate()
         
         if (WCSession.isSupported()) {
-            session = WCSession.defaultSession()
-            session.delegate = self
-            session.activateSession()
+            watchSession = WCSession.defaultSession()
+            watchSession!.delegate = self
+            watchSession!.activateSession()
+            
+            self.requestTopEvents()
         }
     }
 
@@ -47,9 +49,11 @@ class InterfaceController: WKInterfaceController, WCSessionDelegate {
     }
     
     func updateInterface() {
+        NSLog("Updating UI...")
+
         if (topEvents?.count == 0) {
-            self.addLabel.setText("No Top Events")
-            self.topEvents = ["Smoke", "Cat Pee", "Test"]
+            self.addLabel.setText("No Events Found")
+            self.topEvents = ["Test"]// TODO: Remove
         } else {
             self.addLabel.setText("Tap to Add Event")
         }
@@ -62,24 +66,23 @@ class InterfaceController: WKInterfaceController, WCSessionDelegate {
         }
     }
     
-    func setTimeout(delay:NSTimeInterval, block:()->Void) -> NSTimer {
-        return NSTimer.scheduledTimerWithTimeInterval(delay, target: NSBlockOperation(block: block), selector: #selector(NSOperation.main), userInfo: nil, repeats: false)
-    }
-    
-    func addEvent(eventName: String) {
-        if (session.reachable) {
-            NSLog("SESSION IS REACHABLE")
+    // Ask iOS App to get Top Events
+    func requestTopEvents() {
+        if (watchSession!.reachable) {
+            let message = ["request": "topEvents"]
             
-            let message = ["event": eventName]
+            self.addLabel.setText("# Loading... #")
             
-            session.sendMessage(message, replyHandler: { reply in
-                self.addLabel.setText("# Event Added #")
-
-                // Change back after 3 seconds
-                self.setTimeout(3, block: {
-                    self.addLabel.setText("Tap to Add Event")
+            watchSession!.sendMessage(message, replyHandler: { reply in
+                self.topEvents = reply["topEvents"] as! Array<String>
+                
+                // Update, in a non-GCD thread
+                dispatch_async(dispatch_get_main_queue(), {
+                    self.performSelector(#selector(InterfaceController.updateInterface), withObject: nil, afterDelay: 0.0)
                 })
+                
                 }, errorHandler: { error in
+                    self.addLabel.setText("# Failed Loading #")
                     print("error: \(error)")
             })
         } else {
@@ -88,13 +91,26 @@ class InterfaceController: WKInterfaceController, WCSessionDelegate {
         }
     }
     
-    func session(session: WCSession, didReceiveApplicationContext applicationContext: [String : AnyObject]){
-        let topEvents : Array<String> = applicationContext["topEvents"] as! Array<String>
-        
-        NSLog("JUST ABOUT RECEIVED EVENTS")
-        self.topEvents = topEvents
-        
-        self.updateInterface()
+    // Ask iOS App to add event
+    func addEvent(eventName: String) {
+        if (watchSession!.reachable) {
+            let message = ["event": eventName]
+            
+            watchSession!.sendMessage(message, replyHandler: { reply in
+                self.addLabel.setText("# Event Added #")
+
+                // Update after 3 seconds
+                dispatch_async(dispatch_get_main_queue(), {
+                    self.performSelector(#selector(InterfaceController.updateInterface), withObject: nil, afterDelay: 3.0)
+                })
+
+                }, errorHandler: { error in
+                    print("error: \(error)")
+            })
+        } else {
+            // we aren't in range of the phone, they didn't bring it on their run
+            NSLog("SESSION IS NOT REACHABLE")
+        }
     }
 
 }

@@ -25,8 +25,8 @@ class EditEventViewController: UIViewController, UITextFieldDelegate {
         self.nameTextField.delegate = self
         
         // Fill up the fields with the data sent over
-        self.nameTextField.text = self.selectedEvent.valueForKey("name") as? String
-        self.datePicker.date = self.selectedEvent.valueForKey("date") as! NSDate
+        self.nameTextField.text = self.selectedEvent.value(forKey: "name") as? String
+        self.datePicker.date = self.selectedEvent.value(forKey: "date") as! Date
     }
 
     override func didReceiveMemoryWarning() {
@@ -34,28 +34,26 @@ class EditEventViewController: UIViewController, UITextFieldDelegate {
         // Dispose of any resources that can be recreated.
     }
 
-    override func viewWillAppear(animated: Bool) {
+    override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
     }
     
     // Update the event
-    @IBAction func updateEvent(sender: AnyObject) {
-        let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
+    @IBAction func updateEvent(_ sender: AnyObject) {
+        let appDelegate = UIApplication.shared.delegate as! AppDelegate
         let context = appDelegate.managedObjectContext
         
         // Set defaults
         var eventName: NSString = ""
-        var eventDate: NSDate = NSDate()// Default event date to "now"
+        var eventDate: Date = Date()// Default event date to "now"
         
         // Avoid empty values crashing the code
         if let tmpEventName: NSString = self.nameTextField.text as NSString? {
             eventName = tmpEventName
         }
-        if let tmpEventDate: NSDate = self.datePicker.date as NSDate? {
+        if let tmpEventDate: Date = self.datePicker.date as Date? {
             eventDate = tmpEventDate
         }
-        
-        NSLog("VALUES = %@, %@", eventName, eventDate)
         
         //
         // START: Validate fields for common errors
@@ -94,7 +92,7 @@ class EditEventViewController: UIViewController, UITextFieldDelegate {
             self.listViewController.getAllEvents()
 
             // Go back
-            self.dismissViewControllerAnimated(true, completion: nil)
+            self.dismiss(animated: true, completion: nil)
         } else {
             NSLog("Error: %@", error!)
             
@@ -103,18 +101,18 @@ class EditEventViewController: UIViewController, UITextFieldDelegate {
     }
 
     // Cancel button was tapped
-    @IBAction func cancelTapped(sender: AnyObject) {
+    @IBAction func cancelTapped(_ sender: AnyObject) {
         // Go back
-        self.dismissViewControllerAnimated(true, completion: nil)
+        self.dismiss(animated: true, completion: nil)
     }
 
     // Dismiss keyboard on touch outside
-    override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         self.nameTextField.endEditing(true)
     }
     
     // Dismiss keyboard on pressing done
-    func textFieldShouldReturn(textField: UITextField) -> Bool {
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         self.nameTextField.resignFirstResponder()
         
         return true

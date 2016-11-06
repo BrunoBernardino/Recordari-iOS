@@ -26,7 +26,6 @@
 		4FC2AA441B5E651E0000FC86 /* RecordariTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FC2AA431B5E651E0000FC86 /* RecordariTests.swift */; };
 		4FC2AA4E1B5E66800000FC86 /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FC2AA4D1B5E66800000FC86 /* SettingsViewController.swift */; };
 		4FC2AA511B5E683D0000FC86 /* Recordari.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 4FC2AA4F1B5E683D0000FC86 /* Recordari.xcdatamodeld */; };
-		4FC2AA531B5E6E930000FC86 /* EventBoxView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FC2AA521B5E6E930000FC86 /* EventBoxView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -105,7 +104,6 @@
 		4FC2AA431B5E651E0000FC86 /* RecordariTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordariTests.swift; sourceTree = "<group>"; };
 		4FC2AA4D1B5E66800000FC86 /* SettingsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsViewController.swift; sourceTree = "<group>"; };
 		4FC2AA501B5E683D0000FC86 /* Recordari.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Recordari.xcdatamodel; sourceTree = "<group>"; };
-		4FC2AA521B5E6E930000FC86 /* EventBoxView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EventBoxView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -183,7 +181,6 @@
 				4F24AEFB1B5FF637009B3D5E /* Recordari.entitlements */,
 				4FC2AA2B1B5E651E0000FC86 /* AppDelegate.swift */,
 				4FC2AA2D1B5E651E0000FC86 /* MainViewController.swift */,
-				4FC2AA521B5E6E930000FC86 /* EventBoxView.swift */,
 				4F2703F81B5FA8B6007F3465 /* AddEventViewController.swift */,
 				4F86394A1B668B6600CC4936 /* EditEventViewController.swift */,
 				4FC2AA2F1B5E651E0000FC86 /* PastEventsViewController.swift */,
@@ -304,20 +301,23 @@
 			attributes = {
 				LastSwiftMigration = 0730;
 				LastSwiftUpdateCheck = 0730;
-				LastUpgradeCheck = 0730;
+				LastUpgradeCheck = 0810;
 				ORGANIZATIONNAME = "Bruno Bernardino";
 				TargetAttributes = {
 					4F5814B71D0A10E9001F014F = {
 						CreatedOnToolsVersion = 7.3.1;
 						DevelopmentTeam = BR4RWWLMM9;
+						LastSwiftMigration = 0810;
 					};
 					4F5814C31D0A10E9001F014F = {
 						CreatedOnToolsVersion = 7.3.1;
 						DevelopmentTeam = BR4RWWLMM9;
+						LastSwiftMigration = 0810;
 					};
 					4FC2AA251B5E651E0000FC86 = {
 						CreatedOnToolsVersion = 6.4;
 						DevelopmentTeam = BR4RWWLMM9;
+						LastSwiftMigration = 0810;
 						SystemCapabilities = {
 							com.apple.iCloud = {
 								enabled = 1;
@@ -326,6 +326,7 @@
 					};
 					4FC2AA3C1B5E651E0000FC86 = {
 						CreatedOnToolsVersion = 6.4;
+						LastSwiftMigration = 0810;
 						TestTargetID = 4FC2AA251B5E651E0000FC86;
 					};
 				};
@@ -406,7 +407,6 @@
 				4FBD43B21B5FD5AC00623FCB /* EventTableCell.swift in Sources */,
 				4FC2AA2C1B5E651E0000FC86 /* AppDelegate.swift in Sources */,
 				4FC2AA511B5E683D0000FC86 /* Recordari.xcdatamodeld in Sources */,
-				4FC2AA531B5E6E930000FC86 /* EventBoxView.swift in Sources */,
 				4F2703F91B5FA8B6007F3465 /* AddEventViewController.swift in Sources */,
 				4F86394B1B668B6600CC4936 /* EditEventViewController.swift in Sources */,
 				4FC2AA2E1B5E651E0000FC86 /* MainViewController.swift in Sources */,
@@ -474,6 +474,7 @@
 				PRODUCT_NAME = "${TARGET_NAME}";
 				SDKROOT = watchos;
 				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 3.0;
 				TARGETED_DEVICE_FAMILY = 4;
 				WATCHOS_DEPLOYMENT_TARGET = 2.2;
 			};
@@ -490,6 +491,7 @@
 				PRODUCT_NAME = "${TARGET_NAME}";
 				SDKROOT = watchos;
 				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 3.0;
 				TARGETED_DEVICE_FAMILY = 4;
 				WATCHOS_DEPLOYMENT_TARGET = 2.2;
 			};
@@ -498,18 +500,20 @@
 		4F5814D81D0A10E9001F014F /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ANALYZER_NONNULL = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				DEBUG_INFORMATION_FORMAT = dwarf;
-				EMBEDDED_CONTENT_CONTAINS_SWIFT = YES;
+				DEVELOPMENT_TEAM = BR4RWWLMM9;
 				IBSC_MODULE = Watch_Extension;
 				INFOPLIST_FILE = Watch/Info.plist;
 				PRODUCT_BUNDLE_IDENTIFIER = com.emotionloop.Recordari.watchkitapp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = watchos;
 				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 3.0;
 				TARGETED_DEVICE_FAMILY = 4;
 				WATCHOS_DEPLOYMENT_TARGET = 2.2;
 			};
@@ -518,17 +522,19 @@
 		4F5814D91D0A10E9001F014F /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ANALYZER_NONNULL = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				EMBEDDED_CONTENT_CONTAINS_SWIFT = YES;
+				DEVELOPMENT_TEAM = BR4RWWLMM9;
 				IBSC_MODULE = Watch_Extension;
 				INFOPLIST_FILE = Watch/Info.plist;
 				PRODUCT_BUNDLE_IDENTIFIER = com.emotionloop.Recordari.watchkitapp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = watchos;
 				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 3.0;
 				TARGETED_DEVICE_FAMILY = 4;
 				WATCHOS_DEPLOYMENT_TARGET = 2.2;
 			};
@@ -547,8 +553,10 @@
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
@@ -571,7 +579,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
@@ -592,8 +600,10 @@
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
@@ -609,9 +619,10 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
+				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
 				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;
@@ -624,12 +635,14 @@
 				CODE_SIGN_ENTITLEMENTS = Recordari/Recordari.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				DEVELOPMENT_TEAM = BR4RWWLMM9;
 				INFOPLIST_FILE = Recordari/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.emotionloop.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
+				SWIFT_VERSION = 3.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -642,12 +655,14 @@
 				CODE_SIGN_ENTITLEMENTS = Recordari/Recordari.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				DEVELOPMENT_TEAM = BR4RWWLMM9;
 				INFOPLIST_FILE = Recordari/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.emotionloop.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
+				SWIFT_VERSION = 3.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
@@ -668,6 +683,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.emotionloop.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 3.0;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Recordari.app/Recordari";
 			};
 			name = Debug;
@@ -684,6 +700,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.emotionloop.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 3.0;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Recordari.app/Recordari";
 			};
 			name = Release;

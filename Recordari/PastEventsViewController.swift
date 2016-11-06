@@ -16,13 +16,16 @@ class PastEventsViewController: UIViewController, UITableViewDelegate, UITableVi
     @IBOutlet weak var nameFilterBar: UISearchBar!
     @IBOutlet weak var tableView: UITableView!
     
-    var fromDate: NSDate? = nil
-    var toDate: NSDate? = nil
+    var fromDate: Date? = nil
+    var toDate: Date? = nil
+    
+    @IBOutlet weak var fromLabel: UILabel!
+    @IBOutlet weak var toLabel: UILabel!
     
     var events: NSMutableArray = []
     
     var selectedEvent: NSManagedObject!
-    var settings: NSUserDefaults!
+    var settings: UserDefaults!
     
     var statusBarShowing: Bool = true
     
@@ -35,7 +38,7 @@ class PastEventsViewController: UIViewController, UITableViewDelegate, UITableVi
         // Change the background color of the search bar
         self.nameFilterBar.tintColor = UIColor(red: 255/255.0, green: 20/255.0, blue: 168/255.0, alpha: 1)
         self.nameFilterBar.barTintColor = UIColor(red: 255/255.0, green: 20/255.0, blue: 168/255.0, alpha: 1)
-        self.nameFilterBar.backgroundColor = UIColor.clearColor()
+        self.nameFilterBar.backgroundColor = UIColor.clear
         
         // Have name filter respond to this controller
         self.nameFilterBar.delegate = self
@@ -50,6 +53,10 @@ class PastEventsViewController: UIViewController, UITableViewDelegate, UITableVi
         self.tableView.delegate = self
         self.tableView.dataSource = self
         
+        // Remove insets
+        self.tableView.separatorInset = UIEdgeInsets.zero
+        self.tableView.layoutMargins = UIEdgeInsets.zero
+        
         // Fetch settings
         self.fetchSearchSettings()
 
@@ -61,9 +68,14 @@ class PastEventsViewController: UIViewController, UITableViewDelegate, UITableVi
         
         // Make sure the to date input will show a date picker
         addDatePickerToInput("to")
+        
+        // Make sure the "To:" label will be visible for narrower screens
+        if (self.view.frame.width <= 320) {
+            self.toLabel.layer.position.x += 32
+        }
     }
     
-    override func viewWillAppear(animated: Bool) {
+    override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
         // If we already loaded this view, fetch search settings and all events again
@@ -83,26 +95,26 @@ class PastEventsViewController: UIViewController, UITableViewDelegate, UITableVi
         // Dispose of any resources that can be recreated.
     }
 
-    func numberOfSectionsInTableView(tableView: UITableView) -> Int {
+    func numberOfSections(in tableView: UITableView) -> Int {
         return 1
     }
     
-    func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return self.events.count
     }
 
     // Display data in the table view
-    func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        let cell: EventTableCell = tableView.dequeueReusableCellWithIdentifier("eventCell") as! EventTableCell
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell: EventTableCell = tableView.dequeueReusableCell(withIdentifier: "eventCell") as! EventTableCell
         
-        let dateFormatter: NSDateFormatter = NSDateFormatter()
-        dateFormatter.dateStyle = NSDateFormatterStyle.ShortStyle
+        let dateFormatter: DateFormatter = DateFormatter()
+        dateFormatter.dateStyle = DateFormatter.Style.short
         dateFormatter.dateFormat = "MMM d, YYYY"
         
-        let eventName: String = self.events.objectAtIndex(indexPath.row).valueForKey("name") as! String
-        let eventDate: NSDate = self.events.objectAtIndex(indexPath.row).valueForKey("date") as! NSDate
+        let eventName: String = (self.events.object(at: indexPath.row) as AnyObject).value(forKey: "name") as! String
+        let eventDate: Date = (self.events.object(at: indexPath.row) as AnyObject).value(forKey: "date") as! Date
 
-        let dateString: String = dateFormatter.stringFromDate(eventDate)
+        let dateString: String = dateFormatter.string(from: eventDate)
         
         cell.eventNameLabel.text = eventName
         cell.eventDateLabel.text = dateString
@@ -111,35 +123,35 @@ class PastEventsViewController: UIViewController, UITableViewDelegate, UITableVi
     }
     
     // Show edit/update event view
-    func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
-        self.selectedEvent = self.events.objectAtIndex(indexPath.row) as! NSManagedObject
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        self.selectedEvent = self.events.object(at: indexPath.row) as! NSManagedObject
         
         // Show edit event
-        self.performSegueWithIdentifier("editEvent", sender: self)
+        self.performSegue(withIdentifier: "editEvent", sender: self)
     }
     
     // Allow events to be deleted
-    func tableView(tableView: UITableView, canEditRowAtIndexPath indexPath: NSIndexPath) -> Bool {
+    func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
         return true
     }
     
     // Delete event
-    func tableView(tableView: UITableView, commitEditingStyle editingStyle: UITableViewCellEditingStyle, forRowAtIndexPath indexPath: NSIndexPath) {
+    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
 
-        if (editingStyle == UITableViewCellEditingStyle.Delete) {
-            let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
+        if (editingStyle == UITableViewCellEditingStyle.delete) {
+            let appDelegate = UIApplication.shared.delegate as! AppDelegate
             let context: NSManagedObjectContext? = appDelegate.managedObjectContext
             
             // Delete from core data
-            context!.deleteObject(self.events.objectAtIndex(indexPath.row) as! NSManagedObject)
+            context!.delete(self.events.object(at: indexPath.row) as! NSManagedObject)
             do {
                 try context!.save()
             } catch _ {
             }
             
             // Delete from view
-            self.events.removeObjectAtIndex(indexPath.row)
-            tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation:UITableViewRowAnimation.Fade)
+            self.events.removeObject(at: indexPath.row)
+            tableView.deleteRows(at: [indexPath], with:UITableViewRowAnimation.fade)
             
             // Reload data
             self.getAllEvents()
@@ -147,7 +159,7 @@ class PastEventsViewController: UIViewController, UITableViewDelegate, UITableVi
     }
     
     // Table is being dragged
-    func scrollViewWillBeginDragging(scrollView: UIScrollView) {
+    func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
         // Dismiss possible keyboard on search field
         self.nameFilterBar.endEditing(true)
         
@@ -157,19 +169,19 @@ class PastEventsViewController: UIViewController, UITableViewDelegate, UITableVi
     }
     
     // Name filter changed
-    func searchBar(searchBar: UISearchBar, textDidChange searchText: String) {
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         self.getAllEvents()
     }
     
     // When the from date UIDatePicker is set, update the label and filters
-    func fromDatePickerChanged(sender: UIDatePicker) {
-        let dateFormatter: NSDateFormatter = NSDateFormatter()
-        dateFormatter.dateStyle = NSDateFormatterStyle.ShortStyle
+    func fromDatePickerChanged(_ sender: UIDatePicker) {
+        let dateFormatter: DateFormatter = DateFormatter()
+        dateFormatter.dateStyle = DateFormatter.Style.short
         dateFormatter.dateFormat = "MMM d, YYYY"
         
-        let eventDate: NSDate = sender.date
+        let eventDate: Date = sender.date
         
-        let dateString: String = dateFormatter.stringFromDate(eventDate)
+        let dateString: String = dateFormatter.string(from: eventDate)
 
         self.fromDateLabel.text = dateString
         self.fromDate = eventDate
@@ -179,14 +191,14 @@ class PastEventsViewController: UIViewController, UITableViewDelegate, UITableVi
     }
     
     // When the to date UIDatePicker is set, update the label and filters
-    func toDatePickerChanged(sender: UIDatePicker) {
-        let dateFormatter: NSDateFormatter = NSDateFormatter()
-        dateFormatter.dateStyle = NSDateFormatterStyle.ShortStyle
+    func toDatePickerChanged(_ sender: UIDatePicker) {
+        let dateFormatter: DateFormatter = DateFormatter()
+        dateFormatter.dateStyle = DateFormatter.Style.short
         dateFormatter.dateFormat = "MMM d, YYYY"
         
-        let eventDate: NSDate = sender.date
+        let eventDate: Date = sender.date
         
-        let dateString: String = dateFormatter.stringFromDate(eventDate)
+        let dateString: String = dateFormatter.string(from: eventDate)
         
         self.toDateLabel.text = dateString
         self.toDate = eventDate
@@ -196,7 +208,7 @@ class PastEventsViewController: UIViewController, UITableViewDelegate, UITableVi
     }
     
     // Close the datepicker, when "Done" is tapped
-    func datePickerDone(sender: AnyObject) {
+    func datePickerDone(_ sender: AnyObject) {
         // Dismiss datepicker on date fields
         self.fromDateLabel.endEditing(true)
         self.toDateLabel.endEditing(true)
@@ -207,12 +219,12 @@ class PastEventsViewController: UIViewController, UITableViewDelegate, UITableVi
     
     // Get all events (filtered by date and text/name)
     func getAllEvents() {
-        let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
+        let appDelegate = UIApplication.shared.delegate as! AppDelegate
         let context = appDelegate.managedObjectContext
         
-        let entityDesc = NSEntityDescription.entityForName("Event", inManagedObjectContext:context!)
+        let entityDesc = NSEntityDescription.entity(forEntityName: "Event", in:context!)
         
-        let request = NSFetchRequest()
+        let request = NSFetchRequest<NSFetchRequestResult>()
         request.entity = entityDesc
         
         // Sort events by date
@@ -233,24 +245,24 @@ class PastEventsViewController: UIViewController, UITableViewDelegate, UITableVi
         //
         
         // Make start date's time = 00:00:00
-        let currentCalendar = NSCalendar.currentCalendar()
-        let calendarUnits: NSCalendarUnit = [NSCalendarUnit.Year, NSCalendarUnit.Month, NSCalendarUnit.Day, NSCalendarUnit.Hour, NSCalendarUnit.Minute, NSCalendarUnit.Second]
-        let fromDateComponents = currentCalendar.components(calendarUnits, fromDate: self.fromDate!)
+        let currentCalendar = Calendar.current
+        let calendarUnits: NSCalendar.Unit = [NSCalendar.Unit.year, NSCalendar.Unit.month, NSCalendar.Unit.day, NSCalendar.Unit.hour, NSCalendar.Unit.minute, NSCalendar.Unit.second]
+        var fromDateComponents = (currentCalendar as NSCalendar).components(calendarUnits, from: self.fromDate!)
         
         fromDateComponents.hour = 0
         fromDateComponents.minute = 0
         fromDateComponents.second = 0
         
-        self.fromDate = currentCalendar.dateFromComponents(fromDateComponents)
+        self.fromDate = currentCalendar.date(from: fromDateComponents)
         
         // Make end date's time = 23:59:59
-        let toDateComponents = currentCalendar.components(calendarUnits, fromDate: self.toDate!)
+        var toDateComponents = (currentCalendar as NSCalendar).components(calendarUnits, from: self.toDate!)
         
         toDateComponents.hour = 23
         toDateComponents.minute = 59
         toDateComponents.second = 59
         
-        self.toDate = currentCalendar.dateFromComponents(toDateComponents)
+        self.toDate = currentCalendar.date(from: toDateComponents)
         
         //
         // Update search settings and search
@@ -261,16 +273,16 @@ class PastEventsViewController: UIViewController, UITableViewDelegate, UITableVi
         let usedPredicates = NSMutableArray()
         
         // Add dates to search
-        let datesPredicate = NSPredicate(format: "(date >= %@) and (date <= %@)", self.fromDate!, self.toDate!)
+        let datesPredicate = NSPredicate(format: "(date >= %@) and (date <= %@)", self.fromDate! as CVarArg, self.toDate! as CVarArg)
         
-        usedPredicates.addObject(datesPredicate)
+        usedPredicates.add(datesPredicate)
         
         // Add any self.currentFilterName to search
         let filterNamePredicate: NSPredicate
         if ( self.nameFilterBar.text!.characters.count > 0 ) {
             filterNamePredicate = NSPredicate(format: "(name CONTAINS[cd] %@)", self.nameFilterBar.text!)
             
-            usedPredicates.addObject(filterNamePredicate)
+            usedPredicates.add(filterNamePredicate)
         }
         
         // Add the predicate to the request
@@ -280,7 +292,7 @@ class PastEventsViewController: UIViewController, UITableViewDelegate, UITableVi
         var objects: NSArray
         
         let error: NSError? = nil
-        objects = try! context!.executeFetchRequest(request)
+        objects = try! context!.fetch(request) as NSArray
         
         if ( error != nil ) {
             objects = []
@@ -296,7 +308,7 @@ class PastEventsViewController: UIViewController, UITableViewDelegate, UITableVi
     
     // Fetch search settings
     func fetchSearchSettings() {
-        self.settings = NSUserDefaults.standardUserDefaults()
+        self.settings = UserDefaults.standard
         self.settings.synchronize()
         
         var shouldUpdateUI = false
@@ -305,12 +317,12 @@ class PastEventsViewController: UIViewController, UITableViewDelegate, UITableVi
         // Dates
         //
         
-        if let currentSearchFromDate = self.settings.valueForKey("searchFromDate") as? NSDate {
+        if let currentSearchFromDate = self.settings.value(forKey: "searchFromDate") as? Date {
             self.fromDate = currentSearchFromDate
             shouldUpdateUI = true
         }
         
-        if let currentSearchToDate = self.settings.valueForKey("searchToDate") as? NSDate {
+        if let currentSearchToDate = self.settings.value(forKey: "searchToDate") as? Date {
             self.toDate = currentSearchToDate
             shouldUpdateUI = true
         }
@@ -323,7 +335,7 @@ class PastEventsViewController: UIViewController, UITableViewDelegate, UITableVi
     
     // Update search settings
     func updateSearchSettings() {
-        self.settings = NSUserDefaults.standardUserDefaults()
+        self.settings = UserDefaults.standard
         self.settings.synchronize()
         
         self.settings.setValue(self.fromDate, forKey: "searchFromDate")
@@ -332,26 +344,26 @@ class PastEventsViewController: UIViewController, UITableViewDelegate, UITableVi
     
     // Update search labels & views
     func updateSearchLabelsAndViews() {
-        let dateFormatter = NSDateFormatter()
+        let dateFormatter = DateFormatter()
         
         // Set format for text views
         dateFormatter.dateFormat = NSLocalizedString("MMM d, yyyy", comment: "")
         
         // Set "from date" text view
-        self.fromDateLabel.text = dateFormatter.stringFromDate(self.fromDate!)
+        self.fromDateLabel.text = dateFormatter.string(from: self.fromDate!)
         
         // Set "to date" text view
-        self.toDateLabel.text = dateFormatter.stringFromDate(self.toDate!)
+        self.toDateLabel.text = dateFormatter.string(from: self.toDate!)
     }
     
     // Set from and to dates to the current month (first and last day)
     func setDefaultSearchDates() {
-        let dateFormatter = NSDateFormatter()
-        let currentDate = NSDate()
-        let currentCalendar = NSCalendar.currentCalendar()
-        let calendarUnits: NSCalendarUnit = [NSCalendarUnit.Year, NSCalendarUnit.Month, NSCalendarUnit.Day]
+        let dateFormatter = DateFormatter()
+        let currentDate = Date()
+        let currentCalendar = Calendar.current
+        let calendarUnits: NSCalendar.Unit = [NSCalendar.Unit.year, NSCalendar.Unit.month, NSCalendar.Unit.day]
         
-        let dateComponents = currentCalendar.components(calendarUnits, fromDate: currentDate)
+        var dateComponents = (currentCalendar as NSCalendar).components(calendarUnits, from: currentDate)
         
         // Set format for text views
         dateFormatter.dateFormat = NSLocalizedString("MMM d, yyyy", comment: "")
@@ -360,31 +372,31 @@ class PastEventsViewController: UIViewController, UITableViewDelegate, UITableVi
         // Set "from date"
         //
         dateComponents.day = 1
-        self.fromDate = currentCalendar.dateFromComponents(dateComponents)
+        self.fromDate = currentCalendar.date(from: dateComponents)
         
         // Set "from date" text field
-        self.fromDateLabel.text = dateFormatter.stringFromDate(self.fromDate!)
+        self.fromDateLabel.text = dateFormatter.string(from: self.fromDate!)
         
         //
         // Set "to date"
         //
-        let daysRange: NSRange = currentCalendar.rangeOfUnit(NSCalendarUnit.Day, inUnit: NSCalendarUnit.Month, forDate: currentDate)
+        let daysRange: NSRange = (currentCalendar as NSCalendar).range(of: NSCalendar.Unit.day, in: NSCalendar.Unit.month, for: currentDate)
         dateComponents.day = daysRange.length// Last day of the current month
         
-        self.toDate = currentCalendar.dateFromComponents(dateComponents)
+        self.toDate = currentCalendar.date(from: dateComponents)
         
         // Set "to date" text
-        self.toDateLabel.text = dateFormatter.stringFromDate(self.toDate!)
+        self.toDateLabel.text = dateFormatter.string(from: self.toDate!)
         
         // UI Updates
         updateSearchLabelsAndViews()
     }
     
     // Add a datepicker with the "Done" button to an input
-    func addDatePickerToInput(inputShortName: String) {
+    func addDatePickerToInput(_ inputShortName: String) {
         let datePickerView: UIDatePicker = UIDatePicker()
-        datePickerView.datePickerMode = UIDatePickerMode.Date
-        datePickerView.backgroundColor = UIColor.whiteColor()
+        datePickerView.datePickerMode = UIDatePickerMode.date
+        datePickerView.backgroundColor = UIColor.white
 
         if (inputShortName == "from") {
             datePickerView.date = self.fromDate!
@@ -398,37 +410,37 @@ class PastEventsViewController: UIViewController, UITableViewDelegate, UITableVi
         
         // Add the done button to the UIDatePicker
         let toolBar = UIToolbar()
-        toolBar.barStyle = UIBarStyle.Default
-        toolBar.translucent = true
-        toolBar.tintColor = UIColor.whiteColor()
+        toolBar.barStyle = UIBarStyle.default
+        toolBar.isTranslucent = true
+        toolBar.tintColor = UIColor.white
         toolBar.sizeToFit()
         toolBar.frame.origin.y = -43
         
-        let doneButton = UIBarButtonItem(title: NSLocalizedString("Done", comment:""), style: UIBarButtonItemStyle.Plain, target: self, action: #selector(PastEventsViewController.datePickerDone(_:)))
-        let spaceButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.FlexibleSpace, target: nil, action: nil)
-        doneButton.tintColor = UIColor.blackColor()
+        let doneButton = UIBarButtonItem(title: NSLocalizedString("Done", comment:""), style: UIBarButtonItemStyle.plain, target: self, action: #selector(PastEventsViewController.datePickerDone(_:)))
+        let spaceButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.flexibleSpace, target: nil, action: nil)
+        doneButton.tintColor = UIColor.black
         
         toolBar.setItems([spaceButton, doneButton], animated: true)
-        toolBar.userInteractionEnabled = true
-        doneButton.enabled = true
+        toolBar.isUserInteractionEnabled = true
+        doneButton.isEnabled = true
         
         if (inputShortName == "from") {
             self.fromDateLabel.inputAccessoryView = toolBar
             
             // Add the UIDatePicker to the view
             self.fromDateLabel.inputView = datePickerView
-            datePickerView.addTarget(self, action: #selector(PastEventsViewController.fromDatePickerChanged(_:)), forControlEvents: UIControlEvents.ValueChanged)
+            datePickerView.addTarget(self, action: #selector(PastEventsViewController.fromDatePickerChanged(_:)), for: UIControlEvents.valueChanged)
         } else {
             self.toDateLabel.inputAccessoryView = toolBar
             
             // Add the UIDatePicker to the view
             self.toDateLabel.inputView = datePickerView
-            datePickerView.addTarget(self, action: #selector(PastEventsViewController.toDatePickerChanged(_:)), forControlEvents: UIControlEvents.ValueChanged)
+            datePickerView.addTarget(self, action: #selector(PastEventsViewController.toDatePickerChanged(_:)), for: UIControlEvents.valueChanged)
         }
     }
     
     // Dismiss keyboard or show date pickers as necessary, when the main view is touched
-    override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         let touch: UITouch = (touches.first as UITouch!)!
         
         // Set action for tapping the "from date" view
@@ -449,10 +461,10 @@ class PastEventsViewController: UIViewController, UITableViewDelegate, UITableVi
         self.toDateLabel.endEditing(true)
     }
     
-    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         // Add main controller to editEvent view
         if (segue.identifier == "editEvent") {
-            let viewController = segue.destinationViewController as! EditEventViewController
+            let viewController = segue.destination as! EditEventViewController
             viewController.listViewController = self
             
             // Set selected event
@@ -461,39 +473,39 @@ class PastEventsViewController: UIViewController, UITableViewDelegate, UITableVi
     }
     
     // Hide or show status bar as necessary
-    override func prefersStatusBarHidden() -> Bool {
+    override var prefersStatusBarHidden : Bool {
         return !self.statusBarShowing
     }
     
     // Show alert modal
-    func showAlert(message: String) {
+    func showAlert(_ message: String) {
         if #available(iOS 8.0, *) {
             let alertController = UIAlertController(title: "Recordari", message:
-                message, preferredStyle: UIAlertControllerStyle.Alert)
+                message, preferredStyle: UIAlertControllerStyle.alert)
             
-            alertController.addAction(UIAlertAction(title: NSLocalizedString("OK", comment:""), style: UIAlertActionStyle.Default,handler: nil))
+            alertController.addAction(UIAlertAction(title: NSLocalizedString("OK", comment:""), style: UIAlertActionStyle.default,handler: nil))
             
-            self.presentViewController(alertController, animated: true, completion: nil)
+            self.present(alertController, animated: true, completion: nil)
         }
     }
     
     // Show "toast"
-    func showToast(message: String, window: UIWindow) {
+    func showToast(_ message: String, window: UIWindow) {
         // Hide status bar
         self.statusBarShowing = false
         self.setNeedsStatusBarAppearanceUpdate()
         
         // Create view for the notification
-        let toastView = UIView(frame: CGRectMake(0, -20, window.frame.size.width, 20))
+        let toastView = UIView(frame: CGRect(x: 0, y: -20, width: window.frame.size.width, height: 20))
         
         // Set properties of the view
-        toastView.backgroundColor = UIColor.blackColor()
+        toastView.backgroundColor = UIColor.black
         
         // Create label with text and properties
-        let labelView = UILabel(frame: CGRectMake(0, 0, window.frame.size.width, 20))
+        let labelView = UILabel(frame: CGRect(x: 0, y: 0, width: window.frame.size.width, height: 20))
         labelView.text = message
-        labelView.textColor = UIColor.whiteColor()
-        labelView.textAlignment = NSTextAlignment.Center
+        labelView.textColor = UIColor.white
+        labelView.textAlignment = NSTextAlignment.center
         labelView.font = UIFont(name: "System-Light", size: 10)
         
         // Add label to view
@@ -503,14 +515,14 @@ class PastEventsViewController: UIViewController, UITableViewDelegate, UITableVi
         window.addSubview(toastView)
         
         // Animate view entrance
-        UIView.animateWithDuration(0.5, delay: 0, options: UIViewAnimationOptions.CurveEaseOut
+        UIView.animate(withDuration: 0.5, delay: 0, options: UIViewAnimationOptions.curveEaseOut
             , animations: {
                 toastView.frame.origin.y = 0
             }, completion: {
                 (finished: Bool) -> Void in
                 
                 // Animate view exit
-                UIView.animateWithDuration(0.3, delay: 1.5, options: UIViewAnimationOptions.CurveEaseOut
+                UIView.animate(withDuration: 0.3, delay: 1.5, options: UIViewAnimationOptions.curveEaseOut
                     , animations: {
                         toastView.frame.origin.y = -20
                     }, completion: {

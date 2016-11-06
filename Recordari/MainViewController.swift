@@ -11,26 +11,43 @@ import CoreData
 import WatchConnectivity
 
 class MainViewController: UIViewController, WCSessionDelegate {
+    /** Called when all delegate callbacks for the previously selected watch has occurred. The session can be re-activated for the now selected watch using activateSession. */
+    @available(iOS 9.3, *)
+    public func sessionDidDeactivate(_ session: WCSession) {
+    }
+
+    /** Called when the session can no longer be used to modify or add any new transfers and, all interactive messages will be cancelled, but delegate callbacks for background transfers can still occur. This will happen when the selected watch is being changed. */
+    @available(iOS 9.3, *)
+    public func sessionDidBecomeInactive(_ session: WCSession) {
+    }
+
+    /** Called when the session has completed activation. If session state is WCSessionActivationStateNotActivated there will be an error with more details. */
+    @available(iOS 9.3, *)
+    public func session(_ session: WCSession, activationDidCompleteWith activationState: WCSessionActivationState, error: Error?) {
+    }
+
     
     var addedEventView: Bool = false
     
     var statusBarShowing: Bool = true
     
     @IBOutlet weak var boxesView: UIView!
+    @IBOutlet weak var logNewEventButton: UIButton!
+    @IBOutlet weak var scrollView: UIScrollView!
 
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
         
         // Add color to the tab bar's active items
-        UITabBar.appearance().tintColor = UIColor.blackColor()
+        UITabBar.appearance().tintColor = UIColor.black
         UITabBar.appearance().barTintColor = UIColor(red: 255/255.0, green: 20/255.0, blue: 168/255.0, alpha: 1)
         
         // Color for unselected text
-        UITabBarItem.appearance().setTitleTextAttributes([NSForegroundColorAttributeName: UIColor.whiteColor()], forState: UIControlState.Normal)
+        UITabBarItem.appearance().setTitleTextAttributes([NSForegroundColorAttributeName: UIColor.white], for: UIControlState())
         
         // Color for selected text
-        UITabBarItem.appearance().setTitleTextAttributes([NSForegroundColorAttributeName: UIColor.blackColor()], forState: UIControlState.Selected)
+        UITabBarItem.appearance().setTitleTextAttributes([NSForegroundColorAttributeName: UIColor.black], for: UIControlState.selected)
         
         //
         // Add color to the tab bar's inactive items
@@ -42,7 +59,7 @@ class MainViewController: UIViewController, WCSessionDelegate {
         let unselectedMainImage: UIImage = UIImage(named: "main-icon")!
         let selectedMainImage: UIImage = UIImage(named: "main-icon")!
         
-        mainIcon.image = unselectedMainImage.imageWithRenderingMode(UIImageRenderingMode.AlwaysOriginal)
+        mainIcon.image = unselectedMainImage.withRenderingMode(UIImageRenderingMode.alwaysOriginal)
         mainIcon.selectedImage = selectedMainImage
         
         // Events tab item
@@ -51,7 +68,7 @@ class MainViewController: UIViewController, WCSessionDelegate {
         let unselectedEventsImage: UIImage = UIImage(named: "events-icon")!
         let selectedEventsImage: UIImage = UIImage(named: "events-icon")!
         
-        eventsIcon.image = unselectedEventsImage.imageWithRenderingMode(UIImageRenderingMode.AlwaysOriginal)
+        eventsIcon.image = unselectedEventsImage.withRenderingMode(UIImageRenderingMode.alwaysOriginal)
         eventsIcon.selectedImage = selectedEventsImage
         
         // Settings tab item
@@ -60,12 +77,23 @@ class MainViewController: UIViewController, WCSessionDelegate {
         let unselectedSettingsImage: UIImage = UIImage(named: "settings-icon")!
         let selectedSettingsImage: UIImage = UIImage(named: "settings-icon")!
         
-        settingsIcon.image = unselectedSettingsImage.imageWithRenderingMode(UIImageRenderingMode.AlwaysOriginal)
+        settingsIcon.image = unselectedSettingsImage.withRenderingMode(UIImageRenderingMode.alwaysOriginal)
         settingsIcon.selectedImage = selectedSettingsImage
         
         // Initialize Watch Session
         if #available(iOS 9.0, *) {
             self.initializeWatchSession()
+        }
+        
+        // Make sure you can log a new event
+        self.logNewEventButton.addTarget(self, action: #selector(MainViewController.addEvent(_:)), for: UIControlEvents.touchUpInside)
+        
+        // Make sure you can always scroll
+        self.scrollView.contentSize = CGSize(width: self.boxesView.frame.size.width, height: self.boxesView.frame.size.height + 100)
+        
+        // Make sure the "Log New Event" button will be visible for shorter screens
+        if (self.view.frame.height <= 568) {
+            self.logNewEventButton.layer.position.y += 40
         }
     }
 
@@ -74,130 +102,34 @@ class MainViewController: UIViewController, WCSessionDelegate {
         // Dispose of any resources that can be recreated.
     }
 
-    override func viewWillAppear(animated: Bool) {
+    override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
         // If we already added the views, remove everything first
         if (self.addedEventView) {
             for view in self.boxesView.subviews {
-                view.removeFromSuperview()
+                if view.isKind(of: UIButton.self) == true {
+                    let button = view as! UIButton
+
+                    if button.currentTitle != "Log New Event" {
+                        view.removeFromSuperview()
+                    }
+                }
             }
         }
-        
-        //NSLog("Writing views")
-        
-        // Add "Log New Event" view top the top left, make sure it's half the width and a third of the height.
-        let logNewEventView = self.createEventBoxView(0, colIndex: 0)
-        logNewEventView.buttonText = NSLocalizedString("Log New Event", comment: "")
-        logNewEventView.showButton()
-        logNewEventView.button.setTitleColor(UIColor(red: 255/255.0, green: 20/255.0, blue: 168/255.0, alpha: 1), forState: UIControlState.Normal)
-        logNewEventView.button.addTarget(self, action: #selector(MainViewController.addEvent(_:)), forControlEvents: UIControlEvents.TouchUpInside)
-
-        self.boxesView.addSubview(logNewEventView)
         
         // Fetch popular events
         let topEvents = self.getTopEvents()
         
-        let countOfTopEvents = topEvents.count
-        
-        var rowIndex: CGFloat = 0
-        var colIndex: CGFloat = 0
-        
-        var numberOfItem = 1
+        var currentEventIndex: CGFloat = 1
         
         for topEvent in topEvents {
-            // Define the proper rowIndex and colIndex for the item
-            switch numberOfItem {
-                case 1:
-                    rowIndex = 0
-                    colIndex = 1
-                break
-                case 2:
-                    rowIndex = 1
-                    colIndex = 0
-                break
-                case 3:
-                    rowIndex = 1
-                    colIndex = 1
-                break
-                case 4:
-                    rowIndex = 2
-                    colIndex = 0
-                break
-                case 5:
-                    rowIndex = 2
-                    colIndex = 1
-                break
-                default:
-                    NSLog("## This should not be happening!!! ##")
-                    continue
-            }
+            let topEventButton = self.createEventButton(rowIndex: currentEventIndex, buttonText: (topEvent as AnyObject).value(forKey: "name") as! String)
+            topEventButton.addTarget(self, action: #selector(MainViewController.addEvent(_:)), for: UIControlEvents.touchUpInside)
 
-            let topEventView = self.createEventBoxView(rowIndex, colIndex: colIndex)
-            topEventView.buttonText = topEvent.valueForKey("name") as! String
-            topEventView.name = topEvent.valueForKey("name") as! String
-            topEventView.showButton()
-            topEventView.button.addTarget(self, action: #selector(MainViewController.addEvent(_:)), forControlEvents: UIControlEvents.TouchUpInside)
-
-            self.boxesView.addSubview(topEventView)
+            self.boxesView.addSubview(topEventButton)
             
-            numberOfItem += 1
-        }
-        
-        // Add "blank" events to log
-        var countOfBlankEvents = 5 - countOfTopEvents
-
-        while (countOfBlankEvents > 0) {
-            // Define the proper rowIndex and colIndex for the item
-            switch numberOfItem {
-                case 1:
-                    rowIndex = 0
-                    colIndex = 1
-                break
-                case 2:
-                    rowIndex = 1
-                    colIndex = 0
-                break
-                case 3:
-                    rowIndex = 1
-                    colIndex = 1
-                break
-                case 4:
-                    rowIndex = 2
-                    colIndex = 0
-                break
-                case 5:
-                    rowIndex = 2
-                    colIndex = 1
-                break
-                default:
-                    NSLog("## This should not be happening!!! ##")
-                    continue
-            }
-
-            let blankEventView = self.createEventBoxView(rowIndex, colIndex: colIndex)
-            blankEventView.showButton()
-            blankEventView.button.addTarget(self, action: #selector(MainViewController.addEvent(_:)), forControlEvents: UIControlEvents.TouchUpInside)
-            self.boxesView.addSubview(blankEventView)
-
-            countOfBlankEvents -= 1
-            numberOfItem += 1
-        }
-        
-        // Add white bar view to hide the divider behind the status bar
-        let blankView: UIView = UIView(frame: CGRectMake(0, 0, self.boxesView.frame.width, 20))
-        blankView.backgroundColor = UIColor.whiteColor()
-        self.boxesView.addSubview(blankView)
-        
-        // Add white bar on the sides, to hide grey ones due to AutoLayout
-        if (self.addedEventView && self.boxesView.frame.width > 391) {
-            let leftBlankView: UIView = UIView(frame: CGRectMake(0, 0, 1, self.boxesView.frame.height))
-            leftBlankView.backgroundColor = UIColor.whiteColor()
-            self.boxesView.addSubview(leftBlankView)
-            
-            let rightBlankView: UIView = UIView(frame: CGRectMake(self.boxesView.frame.width - 1, 0, 1, self.boxesView.frame.height))
-            rightBlankView.backgroundColor = UIColor.whiteColor()
-            self.boxesView.addSubview(rightBlankView)
+            currentEventIndex += 1
         }
         
         // Mark flag
@@ -206,66 +138,53 @@ class MainViewController: UIViewController, WCSessionDelegate {
     }
     
     // Hide or show status bar as necessary
-    override func prefersStatusBarHidden() -> Bool {
+    override var prefersStatusBarHidden : Bool {
         return !self.statusBarShowing
     }
     
-    // Create Event Box view
-    func createEventBoxView(rowIndex: CGFloat, colIndex: CGFloat) -> EventBoxView {
-        //let tabBarHeight: CGFloat = self.tabBarController!.tabBar.frame.size.height
-        let statusBarHeight: CGFloat = 20
-        
-        let originX: CGFloat = self.boxesView.frame.origin.x
-        let originY: CGFloat = self.boxesView.frame.origin.y
-        let boxWidth: CGFloat = (self.boxesView.frame.size.width / 2)
-        var boxHeight: CGFloat = ((self.boxesView.frame.size.height - statusBarHeight) / 3)
-        var frame: CGRect
-        
-        let frameX = originX + (colIndex * boxWidth)
-        var frameY = originY + (rowIndex * boxHeight)
+    // Create an event button
+    func createEventButton(rowIndex: CGFloat, buttonText: String) -> UIButton {
+        let yPos = rowIndex * (self.logNewEventButton.frame.size.height + 10) + self.logNewEventButton.layer.position.y
+        let buttonRect: CGRect = CGRect(x: 0, y: 0, width: self.logNewEventButton.frame.size.width, height: self.logNewEventButton.frame.size.height)
 
-        var topOffset: CGFloat = 0
-        var bottomOffset: CGFloat = 0
+        let button = UIButton(frame: buttonRect)
         
-        // If this is the first row, position the box behind the status bar, with the increased height
-        if (rowIndex == 0) {
-            frameY = frameY - statusBarHeight
-            boxHeight = boxHeight + statusBarHeight
-            topOffset = statusBarHeight
+        button.center = CGPoint(x: self.logNewEventButton.layer.position.x, y: yPos)
+        
+        button.setTitle(buttonText, for: UIControlState())
+        
+        button.setTitleColor(UIColor.black, for: UIControlState())
+        //button.backgroundColor = UIColor.black
+        
+        button.clipsToBounds = true
+        if #available(iOS 8.2, *) {
+            button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: UIFontWeightLight)
+        } else {
+            // Fallback on earlier versions
         }
         
-        // If this is the last row, position the box behind the tab bar, with the increased height
-        if (rowIndex == 2) {
-            boxHeight = boxHeight + statusBarHeight
-            bottomOffset = statusBarHeight
-        }
-        
-        frame = CGRectMake(frameX, frameY, boxWidth, boxHeight)
-        
-        let eventView: EventBoxView = EventBoxView(frame: frame, topOffset: topOffset, bottomOffset: bottomOffset)
-        
-        return eventView
+        return button
     }
     
-    // Get top 5 events
+    // Get top events
     func getTopEvents() -> NSArray {
-        let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
+        let appDelegate = UIApplication.shared.delegate as! AppDelegate
         let context = appDelegate.managedObjectContext
         
-        let entityDesc = NSEntityDescription.entityForName("Event", inManagedObjectContext:context!)
+        let entityDesc = NSEntityDescription.entity(forEntityName: "Event", in:context!)
         
-        let request = NSFetchRequest()
+        let request = NSFetchRequest<NSFetchRequestResult>()
         request.entity = entityDesc
         
         // Group by Name, with .count
-        request.resultType = NSFetchRequestResultType.DictionaryResultType
+        request.resultType = NSFetchRequestResultType.dictionaryResultType
         let countExpressionArguments = [NSExpression(forKeyPath: "name")]
         let countExpression = NSExpression(forFunction: "count:", arguments: countExpressionArguments)
 
         let countExpressionDescription = NSExpressionDescription()
         countExpressionDescription.expression = countExpression
         countExpressionDescription.name = "count"
-        countExpressionDescription.expressionResultType = NSAttributeType.Integer64AttributeType
+        countExpressionDescription.expressionResultType = NSAttributeType.integer64AttributeType
 
         request.propertiesToFetch = ["name", countExpressionDescription]
         request.propertiesToGroupBy = ["name"]
@@ -276,7 +195,7 @@ class MainViewController: UIViewController, WCSessionDelegate {
         var objects: NSArray
         
         let error: NSError? = nil
-        objects = try! context!.executeFetchRequest(request)
+        objects = try! context!.fetch(request) as NSArray
         
         if ( error != nil ) {
             objects = []
@@ -287,37 +206,47 @@ class MainViewController: UIViewController, WCSessionDelegate {
         
         // Sort by count
         let sortDescriptor: NSSortDescriptor = NSSortDescriptor(key: "count", ascending: false)
-        objects = objects.sortedArrayUsingDescriptors([sortDescriptor])
+        objects = objects.sortedArray(using: [sortDescriptor]) as NSArray!
         
-        // Return only top 5 elements at most
-        if (objects.count > 5) {
-            return [ objects[0], objects[1], objects[2], objects[3], objects[4] ]
+        // Return only top 12 elements at most
+        if (objects.count > 12) {
+            // TODO: This should really just be a swift array to be able to do nicer stuff
+            return [
+                objects[0],
+                objects[1],
+                objects[2],
+                objects[3],
+                objects[4],
+                objects[5],
+                objects[6],
+                objects[7],
+                objects[8],
+                objects[9],
+                objects[10],
+                objects[11]
+            ]
         }
         
         return objects
     }
     
     // A log button was pressed
-    func addEvent(sender: UIButton!) {
-        let eventBoxView: EventBoxView = sender.superview! as! EventBoxView
-        
-        //NSLog("Event Name = %@", eventBoxView.name)
+    func addEvent(_ sender: UIButton!) {
+        //NSLog("Event Name = %@", sender.currentTitle!)
         
         // If we're not adding a quick event (but a new/custom one), trigger the segue
-        if (eventBoxView.name == "") {
-            self.performSegueWithIdentifier("addEvent", sender: self)
+        if (sender.currentTitle == "Log New Event") {
+            self.performSegue(withIdentifier: "addEvent", sender: self)
             return
         }
         
         // Otherwise we're adding a quick event
-        let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
+        let appDelegate = UIApplication.shared.delegate as! AppDelegate
         let context = appDelegate.managedObjectContext
         
         // Set defaults
-        let eventName: NSString = eventBoxView.name
-        let eventDate: NSDate = NSDate()// Event date will be now
-        
-        //NSLog("VALUES = %@, %@", eventName, eventDate)
+        let eventName: NSString = sender.currentTitle! as NSString
+        let eventDate: Date = Date()// Event date will be now
         
         //
         // START: Validate fields for common errors
@@ -338,7 +267,7 @@ class MainViewController: UIViewController, WCSessionDelegate {
         // Save object
         //
         
-        let newEvent: NSManagedObject = NSEntityDescription.insertNewObjectForEntityForName("Event", inManagedObjectContext: context!) 
+        let newEvent: NSManagedObject = NSEntityDescription.insertNewObject(forEntityName: "Event", into: context!) 
         newEvent.setValue(eventName, forKey: "name")
         newEvent.setValue(eventDate, forKey: "date")
         
@@ -359,43 +288,43 @@ class MainViewController: UIViewController, WCSessionDelegate {
         }
     }
     
-    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         // Add main controller to addEvent view
         if (segue.identifier == "addEvent") {
-            let viewController = segue.destinationViewController as! AddEventViewController
+            let viewController = segue.destination as! AddEventViewController
             viewController.mainViewController = self
         }
     }
     
     // Show alert modal
-    func showAlert(message: String) {
+    func showAlert(_ message: String) {
         if #available(iOS 8.0, *) {
             let alertController = UIAlertController(title: "Recordari", message:
-                message, preferredStyle: UIAlertControllerStyle.Alert)
+                message, preferredStyle: UIAlertControllerStyle.alert)
             
-            alertController.addAction(UIAlertAction(title: NSLocalizedString("OK", comment:""), style: UIAlertActionStyle.Default,handler: nil))
+            alertController.addAction(UIAlertAction(title: NSLocalizedString("OK", comment:""), style: UIAlertActionStyle.default,handler: nil))
             
-            self.presentViewController(alertController, animated: true, completion: nil)
+            self.present(alertController, animated: true, completion: nil)
         }
     }
     
     // Show "toast"
-    func showToast(message: String, window: UIWindow) {
+    func showToast(_ message: String, window: UIWindow) {
         // Hide status bar
         self.statusBarShowing = false
         self.setNeedsStatusBarAppearanceUpdate()
         
         // Create view for the notification
-        let toastView = UIView(frame: CGRectMake(0, -20, window.frame.size.width, 20))
+        let toastView = UIView(frame: CGRect(x: 0, y: -20, width: window.frame.size.width, height: 20))
         
         // Set properties of the view
-        toastView.backgroundColor = UIColor.blackColor()
+        toastView.backgroundColor = UIColor.black
         
         // Create label with text and properties
-        let labelView = UILabel(frame: CGRectMake(0, 0, window.frame.size.width, 20))
+        let labelView = UILabel(frame: CGRect(x: 0, y: 0, width: window.frame.size.width, height: 20))
         labelView.text = message
-        labelView.textColor = UIColor.whiteColor()
-        labelView.textAlignment = NSTextAlignment.Center
+        labelView.textColor = UIColor.white
+        labelView.textAlignment = NSTextAlignment.center
         labelView.font = UIFont(name: "System-Light", size: 10)
         
         // Add label to view
@@ -405,14 +334,14 @@ class MainViewController: UIViewController, WCSessionDelegate {
         window.addSubview(toastView)
         
         // Animate view entrance
-        UIView.animateWithDuration(0.5, delay: 0, options: UIViewAnimationOptions.CurveEaseOut
+        UIView.animate(withDuration: 0.5, delay: 0, options: UIViewAnimationOptions.curveEaseOut
             , animations: {
                 toastView.frame.origin.y = 0
             }, completion: {
                 (finished: Bool) -> Void in
                 
                 // Animate view exit
-                UIView.animateWithDuration(0.3, delay: 1.5, options: UIViewAnimationOptions.CurveEaseOut
+                UIView.animate(withDuration: 0.3, delay: 1.5, options: UIViewAnimationOptions.curveEaseOut
                     , animations: {
                         toastView.frame.origin.y = -20
                     }, completion: {
@@ -439,7 +368,7 @@ class MainViewController: UIViewController, WCSessionDelegate {
         
         // Simplify topEvents
         for event in arrayEvents {
-            simpleEvents.append(event.valueForKey("name") as! String)
+            simpleEvents.append(event.value(forKey: "name") as! String)
         }
         
         return simpleEvents
@@ -449,15 +378,15 @@ class MainViewController: UIViewController, WCSessionDelegate {
     @available(iOS 9.0, *)
     func initializeWatchSession() {
         if (WCSession.isSupported()) {
-            let watchSession = WCSession.defaultSession()
+            let watchSession = WCSession.default()
             watchSession.delegate = self
-            watchSession.activateSession()
+            watchSession.activate()
         }
     }
     
     // Receive message from the watch to add event
     @available(iOS 9.0, *)
-    func session(session: WCSession, didReceiveMessage message: [String : AnyObject], replyHandler: ([String : AnyObject]) -> Void) {
+    func session(_ session: WCSession, didReceiveMessage message: [String : Any], replyHandler: @escaping ([String : Any]) -> Void) {
         let newRequest : String? = message["request"] as? String
         let newEvent : String? = message["event"] as? String
 
@@ -479,20 +408,18 @@ class MainViewController: UIViewController, WCSessionDelegate {
     }
     
     // Add a quick event
-    func addQuickEvent(eventName: String) {
-        let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
+    func addQuickEvent(_ eventName: String) {
+        let appDelegate = UIApplication.shared.delegate as! AppDelegate
         let context = appDelegate.managedObjectContext
         
         // Set defaults
-        let eventDate: NSDate = NSDate()// Default event date to "now"
-        
-        NSLog("VALUES = %@, %@", eventName, eventDate)
+        let eventDate: Date = Date()// Default event date to "now"
         
         //
         // Save object
         //
         
-        let newEvent: NSManagedObject = NSEntityDescription.insertNewObjectForEntityForName("Event", inManagedObjectContext: context!)
+        let newEvent: NSManagedObject = NSEntityDescription.insertNewObject(forEntityName: "Event", into: context!)
         newEvent.setValue(eventName, forKey: "name")
         newEvent.setValue(eventDate, forKey: "date")
         

@@ -16,11 +16,19 @@ class AddEventViewController: UIViewController, UITextFieldDelegate {
     @IBOutlet weak var nameTextField: UITextField!
     @IBOutlet weak var datePicker: UIDatePicker!
 
+    @IBOutlet weak var addEventButton: UIButton!
+    @IBOutlet weak var cancelButton: UIButton!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
         
         self.nameTextField.delegate = self
+        
+        // Make sure the buttons will work for shorter screens
+        if (self.view.frame.height <= 568) {
+            // TODO: moving to front view, changing layout, etc. just doesn't work.
+        }
     }
 
     override func didReceiveMemoryWarning() {
@@ -28,28 +36,26 @@ class AddEventViewController: UIViewController, UITextFieldDelegate {
         // Dispose of any resources that can be recreated.
     }
 
-    override func viewWillAppear(animated: Bool) {
+    override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
     }
     
     // Add an event
-    @IBAction func addEvent(sender: AnyObject) {
-        let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
+    @IBAction func addEvent(_ sender: AnyObject) {
+        let appDelegate = UIApplication.shared.delegate as! AppDelegate
         let context = appDelegate.managedObjectContext
         
         // Set defaults
         var eventName: NSString = ""
-        var eventDate: NSDate = NSDate()// Default event date to "now"
+        var eventDate: Date = Date()// Default event date to "now"
         
         // Avoid empty values crashing the code
         if let tmpEventName: NSString = self.nameTextField.text as NSString? {
             eventName = tmpEventName
         }
-        if let tmpEventDate: NSDate = self.datePicker.date as NSDate? {
+        if let tmpEventDate: Date = self.datePicker.date as Date? {
             eventDate = tmpEventDate
         }
-        
-        NSLog("VALUES = %@, %@", eventName, eventDate)
         
         //
         // START: Validate fields for common errors
@@ -70,7 +76,7 @@ class AddEventViewController: UIViewController, UITextFieldDelegate {
         // Save object
         //
         
-        let newEvent: NSManagedObject = NSEntityDescription.insertNewObjectForEntityForName("Event", inManagedObjectContext: context!) 
+        let newEvent: NSManagedObject = NSEntityDescription.insertNewObject(forEntityName: "Event", into: context!) 
         newEvent.setValue(eventName, forKey: "name")
         newEvent.setValue(eventDate, forKey: "date")
         
@@ -84,13 +90,13 @@ class AddEventViewController: UIViewController, UITextFieldDelegate {
         if (error == nil) {
             // Cleanup fields
             self.nameTextField.text = ""
-            self.datePicker.date = NSDate()
+            self.datePicker.date = Date()
 
             // Show toast
             self.mainViewController.showToast(NSLocalizedString("Event added.", comment:""), window: self.view.window!)
 
             // Go back
-            self.dismissViewControllerAnimated(true, completion: nil)
+            self.dismiss(animated: true, completion: nil)
         } else {
             NSLog("Error: %@", error!)
             
@@ -99,18 +105,18 @@ class AddEventViewController: UIViewController, UITextFieldDelegate {
     }
     
     // Cancel button was tapped
-    @IBAction func cancelTapped(sender: AnyObject) {
+    @IBAction func cancelTapped(_ sender: AnyObject) {
         // Go back
-        self.dismissViewControllerAnimated(true, completion: nil)
+        self.dismiss(animated: true, completion: nil)
     }
 
     // Dismiss keyboard on touch outside
-    override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         self.nameTextField.endEditing(true)
     }
     
     // Dismiss keyboard on pressing done
-    func textFieldShouldReturn(textField: UITextField) -> Bool {
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         self.nameTextField.resignFirstResponder()
         
         return true

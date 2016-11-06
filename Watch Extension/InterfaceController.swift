@@ -13,20 +13,27 @@ import WatchConnectivity
 
 class InterfaceController: WKInterfaceController, WCSessionDelegate {
 
+    /** Called when the session has completed activation. If session state is WCSessionActivationStateNotActivated there will be an error with more details. */
+    @available(watchOS 2.2, *)
+    public func session(_ session: WCSession, activationDidCompleteWith activationState: WCSessionActivationState, error: Error?) {
+        
+    }
+
     @IBOutlet var addLabel: WKInterfaceLabel!
     @IBOutlet var eventsTable: WKInterfaceTable!
     
     var watchSession: WCSession?
     var topEvents: Array<String>! = []
+    var lastLoad: Date! = Date()
 
-    override func awakeWithContext(context: AnyObject?) {
-        super.awakeWithContext(context)
+    override func awake(withContext context: Any?) {
+        super.awake(withContext: context)
         
         self.updateInterface()
     }
     
-    override func table(table: WKInterfaceTable, didSelectRowAtIndex rowIndex: Int) {
-        NSLog("TAPPED: %@", self.topEvents[rowIndex])
+    override func table(_ table: WKInterfaceTable, didSelectRowAt rowIndex: Int) {
+        //NSLog("TAPPED: %@", self.topEvents[rowIndex])
         self.addEvent(self.topEvents[rowIndex])
     }
 
@@ -34,12 +41,17 @@ class InterfaceController: WKInterfaceController, WCSessionDelegate {
         // This method is called when watch view controller is about to be visible to user
         super.willActivate()
         
+        let oneDayAgo: Date = Date().addingTimeInterval(86400)
+        
         if (WCSession.isSupported()) {
-            watchSession = WCSession.defaultSession()
+            watchSession = WCSession.default()
             watchSession!.delegate = self
-            watchSession!.activateSession()
+            watchSession!.activate()
             
-            self.requestTopEvents()
+            // Only request new events if the lastLoad has been done more than a day ago or if there are less than 5 events
+            if (lastLoad <= oneDayAgo || topEvents.count < 5) {
+                self.requestTopEvents()
+            }
         }
     }
 
@@ -60,15 +72,15 @@ class InterfaceController: WKInterfaceController, WCSessionDelegate {
         
         // Configure interface objects here.
         eventsTable.setNumberOfRows((topEvents?.count)!, withRowType: "EventsTableRowController")
-        for (index, eventName) in topEvents.enumerate() {
-            let row = eventsTable.rowControllerAtIndex(index) as! EventsTableRowController
+        for (index, eventName) in topEvents.enumerated() {
+            let row = eventsTable.rowController(at: index) as! EventsTableRowController
             row.label.setText(eventName)
         }
     }
     
     // Ask iOS App to get Top Events
     func requestTopEvents() {
-        if (watchSession!.reachable) {
+        if (watchSession!.isReachable) {
             let message = ["request": "topEvents"]
             
             self.addLabel.setText("# Loading... #")
@@ -77,8 +89,8 @@ class InterfaceController: WKInterfaceController, WCSessionDelegate {
                 self.topEvents = reply["topEvents"] as! Array<String>
                 
                 // Update, in a non-GCD thread
-                dispatch_async(dispatch_get_main_queue(), {
-                    self.performSelector(#selector(InterfaceController.updateInterface), withObject: nil, afterDelay: 0.0)
+                DispatchQueue.main.async(execute: {
+                    self.perform(#selector(InterfaceController.updateInterface), with: nil, afterDelay: 0.0)
                 })
                 
                 }, errorHandler: { error in
@@ -92,16 +104,18 @@ class InterfaceController: WKInterfaceController, WCSessionDelegate {
     }
     
     // Ask iOS App to add event
-    func addEvent(eventName: String) {
-        if (watchSession!.reachable) {
+    func addEvent(_ eventName: String) {
+        if (watchSession!.isReachable) {
+            self.addLabel.setText("# Adding Event #")
+
             let message = ["event": eventName]
             
             watchSession!.sendMessage(message, replyHandler: { reply in
                 self.addLabel.setText("# Event Added #")
 
                 // Update after 3 seconds
-                dispatch_async(dispatch_get_main_queue(), {
-                    self.performSelector(#selector(InterfaceController.updateInterface), withObject: nil, afterDelay: 3.0)
+                DispatchQueue.main.async(execute: {
+                    self.perform(#selector(InterfaceController.updateInterface), with: nil, afterDelay: 3.0)
                 })
 
                 }, errorHandler: { error in
@@ -110,6 +124,7 @@ class InterfaceController: WKInterfaceController, WCSessionDelegate {
         } else {
             // we aren't in range of the phone, they didn't bring it on their run
             NSLog("SESSION IS NOT REACHABLE")
+            self.addLabel.setText("# Can't Reach Phone #")
         }
     }
 

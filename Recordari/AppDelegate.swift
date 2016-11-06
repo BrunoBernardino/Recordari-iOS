@@ -14,11 +14,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
 
-    var settings: NSUserDefaults!
+    var settings: UserDefaults!
     
     var storeOptions: NSDictionary!
 
-    func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
+    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
         
         self.synchronizeSettings()
@@ -27,33 +27,33 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         self.window!.tintColor = UIColor(red: 255/255.0, green: 20/255.0, blue: 168/255.0, alpha: 1)
         
         // Listen for iCloud changes (when they will happen)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(AppDelegate.iCloudWillUpdate(_:)), name: NSPersistentStoreCoordinatorStoresWillChangeNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(AppDelegate.iCloudWillUpdate(_:)), name: NSNotification.Name.NSPersistentStoreCoordinatorStoresWillChange, object: nil)
         
         // Listen for iCloud changes (after it's done)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(AppDelegate.iCloudDidUpdate(_:)), name: NSPersistentStoreCoordinatorStoresDidChangeNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(AppDelegate.iCloudDidUpdate(_:)), name: NSNotification.Name.NSPersistentStoreCoordinatorStoresDidChange, object: nil)
 
         return true
     }
 
-    func applicationWillResignActive(application: UIApplication) {
+    func applicationWillResignActive(_ application: UIApplication) {
         // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.
         // Use this method to pause ongoing tasks, disable timers, and throttle down OpenGL ES frame rates. Games should use this method to pause the game.
     }
 
-    func applicationDidEnterBackground(application: UIApplication) {
+    func applicationDidEnterBackground(_ application: UIApplication) {
         // Use this method to release shared resources, save user data, invalidate timers, and store enough application state information to restore your application to its current state in case it is terminated later.
         // If your application supports background execution, this method is called instead of applicationWillTerminate: when the user quits.
     }
 
-    func applicationWillEnterForeground(application: UIApplication) {
+    func applicationWillEnterForeground(_ application: UIApplication) {
         // Called as part of the transition from the background to the inactive state; here you can undo many of the changes made on entering the background.
     }
 
-    func applicationDidBecomeActive(application: UIApplication) {
+    func applicationDidBecomeActive(_ application: UIApplication) {
         // Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
     }
 
-    func applicationWillTerminate(application: UIApplication) {
+    func applicationWillTerminate(_ application: UIApplication) {
         // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
         // Saves changes in the application's managed object context before the application terminates.
         self.saveContext()
@@ -70,60 +70,60 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
     
     // Get current store URL (it will change based on if iCloud is enabled or not)
-    func currentStoreURL() -> NSURL {
-        return self.applicationDocumentsDirectory.URLByAppendingPathComponent("Oikon.sqlite")
+    func currentStoreURL() -> URL {
+        return self.applicationDocumentsDirectory.appendingPathComponent("Oikon.sqlite")
     }
 
     // iCloud will update
-    func iCloudWillUpdate(sender: AnyObject) {
+    func iCloudWillUpdate(_ sender: AnyObject) {
         self.setiCloudStartSyncDate()
     }
     
     // iCloud finished updating
-    func iCloudDidUpdate(sender: AnyObject) {
+    func iCloudDidUpdate(_ sender: AnyObject) {
         self.setiCloudEndSyncDate()
     }
     
     // MARK: - Core Data stack
     func observeCloudActions(persistentStoreCoordinator psc: NSPersistentStoreCoordinator?) {
         // iCloud notification subscriptions
-        let nc = NSNotificationCenter.defaultCenter();
+        let nc = NotificationCenter.default;
         nc.addObserver(
             self,
             selector: #selector(AppDelegate.storesWillChange(_:)),
-            name: NSPersistentStoreCoordinatorStoresWillChangeNotification,
+            name: NSNotification.Name.NSPersistentStoreCoordinatorStoresWillChange,
             object: psc);
         
         nc.addObserver(
             self,
             selector: #selector(AppDelegate.storesDidChange(_:)),
-            name: NSPersistentStoreCoordinatorStoresDidChangeNotification,
+            name: NSNotification.Name.NSPersistentStoreCoordinatorStoresDidChange,
             object: psc);
         
         nc.addObserver(
             self,
             selector: #selector(AppDelegate.persistentStoreDidImportUbiquitousContentChanges(_:)),
-            name: NSPersistentStoreDidImportUbiquitousContentChangesNotification,
+            name: NSNotification.Name.NSPersistentStoreDidImportUbiquitousContentChanges,
             object: psc);
         
         nc.addObserver(
             self,
             selector: #selector(AppDelegate.mergeChanges(_:)),
-            name: NSManagedObjectContextDidSaveNotification,
+            name: NSNotification.Name.NSManagedObjectContextDidSave,
             object: psc);
     }
     
-    func mergeChanges(notification: NSNotification) {
+    func mergeChanges(_ notification: Notification) {
         NSLog("mergeChanges notif:\(notification)")
         if let moc = managedObjectContext {
-            moc.performBlock {
-                moc.mergeChangesFromContextDidSaveNotification(notification)
+            moc.perform {
+                moc.mergeChanges(fromContextDidSave: notification)
                 self.postRefetchDatabaseNotification()
             }
         }
     }
     
-    func persistentStoreDidImportUbiquitousContentChanges(notification: NSNotification) {
+    func persistentStoreDidImportUbiquitousContentChanges(_ notification: Notification) {
         self.mergeChanges(notification)
     }
     
@@ -131,10 +131,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     // most likely to be called if the user enables / disables iCloud
     // (either globally, or just for your app) or if the user changes
     // iCloud accounts.
-    func storesWillChange(notification: NSNotification) {
+    func storesWillChange(_ notification: Notification) {
         NSLog("storesWillChange notif:\(notification)");
         if let moc = self.managedObjectContext {
-            moc.performBlockAndWait {
+            moc.performAndWait {
                 do {
                     if moc.hasChanges {
                         try moc.save()
@@ -158,7 +158,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
     
     // Subscribe to NSPersistentStoreCoordinatorStoresDidChangeNotification
-    func storesDidChange(notification: NSNotification) {
+    func storesDidChange(_ notification: Notification) {
         // here is when you can refresh your UI and
         // load new data from the new store
         NSLog("storesDidChange posting notif");
@@ -166,39 +166,39 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
     
     func postRefetchDatabaseNotification() {
-        dispatch_async(dispatch_get_main_queue(), { () -> Void in
-            NSNotificationCenter.defaultCenter().postNotificationName(
-                "kRefetchDatabaseNotification", // Replace with your constant of the refetch name, and add observer in the proper place - e.g. RootViewController
+        DispatchQueue.main.async(execute: { () -> Void in
+            NotificationCenter.default.post(
+                name: Notification.Name(rawValue: "kRefetchDatabaseNotification"), // Replace with your constant of the refetch name, and add observer in the proper place - e.g. RootViewController
                 object: nil);
         })
     }
     
-    lazy var applicationDocumentsDirectory: NSURL = {
+    lazy var applicationDocumentsDirectory: URL = {
         // The directory the application uses to store the Core Data store file. This code uses a directory named "hyouuu.pendo" in the application's documents Application Support directory.
-        let urls = NSFileManager.defaultManager().URLsForDirectory(.DocumentDirectory, inDomains: .UserDomainMask)
+        let urls = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
         return urls[urls.count-1] 
         }()
     
     lazy var managedObjectModel: NSManagedObjectModel = {
         // The managed object model for the application. This property is not optional. It is a fatal error for the application not to be able to find and load its model.
-        let modelURL = NSBundle.mainBundle().URLForResource("Recordari", withExtension: "momd")!
+        let modelURL = Bundle.main.url(forResource: "Recordari", withExtension: "momd")!
         NSLog("modelURL:\(modelURL)")
-        return NSManagedObjectModel(contentsOfURL: modelURL)!
+        return NSManagedObjectModel(contentsOf: modelURL)!
         }()
     
     lazy var persistentStoreCoordinator: NSPersistentStoreCoordinator? = {
         // The persistent store coordinator for the application. This implementation creates and return a coordinator, having added the store for the application to it. This property is optional since there are legitimate error conditions that could cause the creation of the store to fail.
         // Create the coordinator and store
         var coordinator: NSPersistentStoreCoordinator? = NSPersistentStoreCoordinator(managedObjectModel: self.managedObjectModel)
-        let url = self.applicationDocumentsDirectory.URLByAppendingPathComponent("Recordari.sqlite")
+        let url = self.applicationDocumentsDirectory.appendingPathComponent("Recordari.sqlite")
         NSLog("storeURL:\(url)")
         var error: NSError? = nil
         var failureReason = "There was an error creating or loading the application's saved data."
         do {
-            try coordinator!.addPersistentStoreWithType(
-                        NSSQLiteStoreType,
-                        configuration: nil,
-                        URL: url,
+            try coordinator!.addPersistentStore(
+                        ofType: NSSQLiteStoreType,
+                        configurationName: nil,
+                        at: url,
                         options: [NSPersistentStoreUbiquitousContentNameKey : "Recordari"])
         } catch var error1 as NSError {
             error = error1
@@ -227,7 +227,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         if coordinator == nil {
             return nil
         }
-        var managedObjectContext = NSManagedObjectContext(concurrencyType: .MainQueueConcurrencyType)
+        var managedObjectContext = NSManagedObjectContext(concurrencyType: .mainQueueConcurrencyType)
         managedObjectContext.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
         managedObjectContext.persistentStoreCoordinator = coordinator
         return managedObjectContext
@@ -254,11 +254,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     // Set / Get default settings
     func synchronizeSettings() {
         NSLog( "## Starting settings synchronization ##" )
-        self.settings = NSUserDefaults.standardUserDefaults()
+        self.settings = UserDefaults.standard
         self.settings.synchronize()
     
         // iCloud sync
-        if (self.settings.objectForKey("iCloud") == nil) {
+        if (self.settings.object(forKey: "iCloud") == nil) {
             let defaultiCloud: NSMutableDictionary = NSMutableDictionary(capacity: 5)
             
             defaultiCloud.setValue(false, forKey: "isEnabled")
@@ -267,14 +267,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             defaultiCloud.setValue(nil, forKey: "lastRemoteSync")// Last time an update existed remotely
             defaultiCloud.setValue(nil, forKey: "lastLocalUpdate")// Last time something was updated locally
             
-            self.settings.setObject(defaultiCloud, forKey: "iCloud")
+            self.settings.set(defaultiCloud, forKey: "iCloud")
             self.storeOptions = self.localStoreOptions()
         } else {
             var iCloudSettings: NSMutableDictionary = NSMutableDictionary(capacity: 5)
     
-            iCloudSettings = self.settings.objectForKey("iCloud") as! NSMutableDictionary
+            iCloudSettings = self.settings.object(forKey: "iCloud") as! NSMutableDictionary
             
-            if (iCloudSettings.valueForKey("isEnabled") as! Bool == true) {
+            if (iCloudSettings.value(forKey: "isEnabled") as! Bool == true) {
                 self.storeOptions = self.iCloudStoreOptions()
             } else {
                 self.storeOptions = self.localStoreOptions()
@@ -283,11 +283,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
     
         // Search dates
-        if (self.settings.valueForKey("searchFromDate") == nil) {
+        if (self.settings.value(forKey: "searchFromDate") == nil) {
             self.settings.setValue(nil, forKey:"searchFromDate")
         }
         
-        if (self.settings.valueForKey("searchToDate") == nil) {
+        if (self.settings.value(forKey: "searchToDate") == nil) {
             self.settings.setValue(nil, forKey:"searchToDate")
         }
         
@@ -296,13 +296,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
     
     // Reload store
-    func reloadWithNewStore(newStore: NSPersistentStore?) {
+    func reloadWithNewStore(_ newStore: NSPersistentStore?) {
         NSLog("RELOADING STORE")
     
         if (newStore != nil) {
             var error: NSError? = nil
             do {
-                try self.persistentStoreCoordinator!.removePersistentStore(newStore!)
+                try self.persistentStoreCoordinator!.remove(newStore!)
             } catch let error1 as NSError {
                 error = error1
             }
@@ -312,7 +312,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
         
         do {
-            try self.persistentStoreCoordinator!.addPersistentStoreWithType(NSSQLiteStoreType, configuration: nil, URL: self.currentStoreURL(), options: self.storeOptions as? [NSObject : AnyObject])
+            try self.persistentStoreCoordinator!.addPersistentStore(ofType: NSSQLiteStoreType, configurationName: nil, at: self.currentStoreURL(), options: self.storeOptions as? [AnyHashable: Any])
         } catch {
             print("Error %@", error)
         }
@@ -325,14 +325,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             self.synchronizeSettings()
         }
         
-        let iCloudSettings: NSMutableDictionary = self.settings.objectForKey("iCloud")!.mutableCopy() as! NSMutableDictionary
+        let iCloudSettings: NSMutableDictionary = NSMutableDictionary(dictionary: (self.settings.object(forKey: "iCloud") as! NSDictionary).mutableCopy() as! NSMutableDictionary)
     
         NSLog("Set the sync start date to now")
     
         // Set the sync start date to now
-        iCloudSettings.setValue(NSDate(), forKey: "lastSyncStart")
+        iCloudSettings.setValue(Date(), forKey: "lastSyncStart")
         
-        self.settings.setObject(iCloudSettings, forKey: "iCloud")
+        self.settings.set(iCloudSettings, forKey: "iCloud")
     }
     
     // Update iCloud end sync date
@@ -342,14 +342,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             self.synchronizeSettings()
         }
         
-        let iCloudSettings: NSMutableDictionary = self.settings.objectForKey("iCloud")!.mutableCopy() as! NSMutableDictionary
+        let iCloudSettings: NSMutableDictionary = NSMutableDictionary(dictionary: (self.settings.object(forKey: "iCloud") as! NSDictionary).mutableCopy() as! NSMutableDictionary)
         
         NSLog("Set the sync end date to now")
         
         // Set the sync start date to now
-        iCloudSettings.setValue(NSDate(), forKey: "lastSuccessfulSync")
+        iCloudSettings.setValue(Date(), forKey: "lastSuccessfulSync")
         
-        self.settings.setObject(iCloudSettings, forKey: "iCloud")
+        self.settings.set(iCloudSettings, forKey: "iCloud")
     }
     
     // Migrate data to iCloud
@@ -358,7 +358,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         let tmpStoreOptions: NSMutableDictionary = self.storeOptions.mutableCopy() as! NSMutableDictionary
         
-        tmpStoreOptions.setObject(true, forKey: NSPersistentStoreRemoveUbiquitousMetadataOption)
+        tmpStoreOptions.setObject(true, forKey: NSPersistentStoreRemoveUbiquitousMetadataOption as NSCopying)
         
         //var store: NSPersistentStore = self.persistentStoreCoordinator!.persistentStoreForURL(self.currentStoreURL())!
         
@@ -371,14 +371,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Reload store
         self.reloadWithNewStore(tmpStore)
         
-        let iCloudSettings: NSMutableDictionary = self.settings.objectForKey("iCloud")!.mutableCopy() as! NSMutableDictionary
+        let iCloudSettings: NSMutableDictionary = NSMutableDictionary(dictionary: (self.settings.object(forKey: "iCloud") as! NSDictionary).mutableCopy() as! NSMutableDictionary)
     
         NSLog("Set the last remote sync date to now")
     
         // Set the last remote sync date to now
-        iCloudSettings.setValue(NSDate(), forKey: "lastRemoteSync")
+        iCloudSettings.setValue(Date(), forKey: "lastRemoteSync")
         
-        self.settings.setObject(iCloudSettings, forKey: "iCloud")
+        self.settings.set(iCloudSettings, forKey: "iCloud")
     }
     
     // Migrate data to local
@@ -387,7 +387,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         let tmpStoreOptions: NSMutableDictionary = self.storeOptions.mutableCopy() as! NSMutableDictionary
         
-        tmpStoreOptions.setObject(true, forKey: NSPersistentStoreRemoveUbiquitousMetadataOption)
+        tmpStoreOptions.setObject(true, forKey: NSPersistentStoreRemoveUbiquitousMetadataOption as NSCopying)
         
         //var store: NSPersistentStore = self.persistentStoreCoordinator!.persistentStoreForURL(self.currentStoreURL())!
         
@@ -400,38 +400,38 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Reload store
         self.reloadWithNewStore(tmpStore)
         
-        let iCloudSettings: NSMutableDictionary = self.settings.objectForKey("iCloud")!.mutableCopy() as! NSMutableDictionary
+        let iCloudSettings: NSMutableDictionary = NSMutableDictionary(dictionary: (self.settings.object(forKey: "iCloud") as! NSDictionary).mutableCopy() as! NSMutableDictionary)
         
         NSLog("Set the last local sync date to now")
         
         // Set the last remote sync date to now
-        iCloudSettings.setValue(NSDate(), forKey: "lastLocalUpdate")
+        iCloudSettings.setValue(Date(), forKey: "lastLocalUpdate")
         
-        self.settings.setObject(iCloudSettings, forKey: "iCloud")
+        self.settings.set(iCloudSettings, forKey: "iCloud")
     }
     
     // Remove all data
     func removeAllData() {
         NSLog("REMOVING ALL DATA!")
         
-        let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
+        let appDelegate = UIApplication.shared.delegate as! AppDelegate
         let context = appDelegate.managedObjectContext
         
         // Remove all events
-        let entityDesc = NSEntityDescription.entityForName("Event", inManagedObjectContext:context!)
+        let entityDesc = NSEntityDescription.entity(forEntityName: "Event", in:context!)
         
-        let request = NSFetchRequest()
+        let request = NSFetchRequest<NSFetchRequestResult>()
         request.entity = entityDesc
         
         var objects: [NSManagedObject]
         
         var error: NSError? = nil
         
-        objects = (try! context!.executeFetchRequest(request)) as! [NSManagedObject]
+        objects = (try! context!.fetch(request)) as! [NSManagedObject]
         
         if ( error == nil ) {
             for object: NSManagedObject in objects {
-                context?.deleteObject(object)
+                context?.delete(object)
             }
             
             do {

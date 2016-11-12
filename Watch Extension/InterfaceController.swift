@@ -48,9 +48,14 @@ class InterfaceController: WKInterfaceController, WCSessionDelegate {
             watchSession!.delegate = self
             watchSession!.activate()
             
+            NSLog("Last Load date = %@", lastLoad.description)
+            
             // Only request new events if the lastLoad has been done more than a day ago or if there are less than 5 events
             if (lastLoad <= oneDayAgo || topEvents.count < 5) {
                 self.requestTopEvents()
+                
+                // Save new load date
+                lastLoad = Date()
             }
         }
     }

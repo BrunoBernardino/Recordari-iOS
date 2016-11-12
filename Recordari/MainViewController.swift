@@ -80,6 +80,15 @@ class MainViewController: UIViewController, WCSessionDelegate {
         settingsIcon.image = unselectedSettingsImage.withRenderingMode(UIImageRenderingMode.alwaysOriginal)
         settingsIcon.selectedImage = selectedSettingsImage
         
+        // Stats tab item
+        let statsIcon: UITabBarItem = self.tabBarController!.tabBar.items![3]
+        
+        let unselectedStatsImage: UIImage = UIImage(named: "stats-icon")!
+        let selectedStatsImage: UIImage = UIImage(named: "stats-icon")!
+        
+        statsIcon.image = unselectedStatsImage.withRenderingMode(UIImageRenderingMode.alwaysOriginal)
+        statsIcon.selectedImage = selectedStatsImage
+        
         // Initialize Watch Session
         if #available(iOS 9.0, *) {
             self.initializeWatchSession()

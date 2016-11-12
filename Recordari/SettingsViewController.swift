@@ -112,8 +112,6 @@ class SettingsViewController: UIViewController, MFMailComposeViewControllerDeleg
         let iCloudSettings: NSMutableDictionary = NSMutableDictionary(dictionary: (self.settings.object(forKey: "iCloud") as! NSDictionary).mutableCopy() as! NSMutableDictionary)
         
         let isiCloudEnabled: Bool = (iCloudSettings.value(forKey: "isEnabled")! as AnyObject).isEqual(true) ? true : false
-    
-        //NSLog(@"iCloud Settings = %@", iCloudSettings);
         
         // iCloud switch
         if (isiCloudEnabled) {
@@ -123,7 +121,6 @@ class SettingsViewController: UIViewController, MFMailComposeViewControllerDeleg
         }
         
         // Set sync text
-        //var lastSyncStartDate: NSDate? = iCloudSettings.valueForKey("lastSyncStart") as! NSDate?
         let lastSyncEndDate: Date? = iCloudSettings.value(forKey: "lastSuccessfulSync") as! Date?
 
         let dateFormatter: DateFormatter = DateFormatter()
@@ -134,9 +131,7 @@ class SettingsViewController: UIViewController, MFMailComposeViewControllerDeleg
 
         var formattedDate: NSString
         
-        //NSLog("%@", iCloudSettings)
-        
-        if (lastSyncEndDate != nil) {
+        if (lastSyncEndDate != nil && isiCloudEnabled) {
             formattedDate = dateFormatter.string(from: lastSyncEndDate!) as NSString
         } else {
             formattedDate = NSLocalizedString("N/A", comment: "") as NSString

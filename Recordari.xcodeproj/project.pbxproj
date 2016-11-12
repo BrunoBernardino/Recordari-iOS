@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		4F2703F91B5FA8B6007F3465 /* AddEventViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F2703F81B5FA8B6007F3465 /* AddEventViewController.swift */; };
+		4F2D655F1DD72EAB005966AF /* StatsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F2D655E1DD72EAB005966AF /* StatsViewController.swift */; };
 		4F5814BC1D0A10E9001F014F /* Interface.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4F5814BA1D0A10E9001F014F /* Interface.storyboard */; };
 		4F5814BE1D0A10E9001F014F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4F5814BD1D0A10E9001F014F /* Assets.xcassets */; };
 		4F5814C51D0A10E9001F014F /* Watch Extension.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 4F5814C41D0A10E9001F014F /* Watch Extension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
@@ -80,6 +81,7 @@
 /* Begin PBXFileReference section */
 		4F24AEFB1B5FF637009B3D5E /* Recordari.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = Recordari.entitlements; sourceTree = "<group>"; };
 		4F2703F81B5FA8B6007F3465 /* AddEventViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddEventViewController.swift; sourceTree = "<group>"; };
+		4F2D655E1DD72EAB005966AF /* StatsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StatsViewController.swift; sourceTree = "<group>"; };
 		4F5814B81D0A10E9001F014F /* Watch.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Watch.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4F5814BB1D0A10E9001F014F /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Interface.storyboard; sourceTree = "<group>"; };
 		4F5814BD1D0A10E9001F014F /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -186,6 +188,7 @@
 				4FC2AA2F1B5E651E0000FC86 /* PastEventsViewController.swift */,
 				4FBD43B11B5FD5AC00623FCB /* EventTableCell.swift */,
 				4FC2AA4D1B5E66800000FC86 /* SettingsViewController.swift */,
+				4F2D655E1DD72EAB005966AF /* StatsViewController.swift */,
 				4FC2AA311B5E651E0000FC86 /* Main.storyboard */,
 				4FC2AA4F1B5E683D0000FC86 /* Recordari.xcdatamodeld */,
 				4FC2AA341B5E651E0000FC86 /* Images.xcassets */,
@@ -410,6 +413,7 @@
 				4F2703F91B5FA8B6007F3465 /* AddEventViewController.swift in Sources */,
 				4F86394B1B668B6600CC4936 /* EditEventViewController.swift in Sources */,
 				4FC2AA2E1B5E651E0000FC86 /* MainViewController.swift in Sources */,
+				4F2D655F1DD72EAB005966AF /* StatsViewController.swift in Sources */,
 				4FC2AA4E1B5E66800000FC86 /* SettingsViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

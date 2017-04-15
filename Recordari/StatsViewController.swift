@@ -132,32 +132,24 @@ class StatsViewController: UIViewController {
         for event in events {
             let eventName = (event as AnyObject).value(forKey: "name") as! String
             let eventCount = (event as AnyObject).value(forKey: "count") as! Int
+            
+            // Get 1 year ago
+            let today: Date = Date()
+            let minDate: Date = Calendar.current.date(byAdding: .year, value: -1, to: today) as Date!
 
-            // Get the earliest date for this event
+            // Get the latest date for this event
             let request = NSFetchRequest<NSFetchRequestResult>()
             request.entity = entityDesc
             request.resultType = NSFetchRequestResultType.dictionaryResultType
             request.fetchLimit = 1
             let predicate =  NSPredicate(format:"name == %@", eventName)
             request.predicate = predicate
-
-            var sortDescriptor = NSSortDescriptor(key: "date", ascending: true)
+            
+            let sortDescriptor = NSSortDescriptor(key: "date", ascending: false)
             request.sortDescriptors = [sortDescriptor]
             
             let error: NSError? = nil
-            var objects = try! context!.fetch(request) as [AnyObject]
-            
-            if ( error != nil ) {
-                return frequencies
-            }
-            
-            let minDate = (objects.first as AnyObject).value(forKey: "date") as! Date
-            
-            // Get the latest date for this event
-            sortDescriptor = NSSortDescriptor(key: "date", ascending: false)
-            request.sortDescriptors = [sortDescriptor]
-            
-            objects = try! context!.fetch(request) as [AnyObject]
+            let objects = try! context!.fetch(request) as [AnyObject]
             
             if ( error != nil ) {
                 return frequencies
@@ -168,8 +160,6 @@ class StatsViewController: UIViewController {
             //
             // Calculate frequencies
             //
-            
-            let today = Date()
             
             var daysDifference = self.getDifferenceInDaysForDates(firstDate: minDate, secondDate: today)
             if (daysDifference == 0) {

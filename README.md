@@ -1,6 +1,6 @@
 # Recordari iOS
 
-This is the code for the Recordari iOS app, available at http://recordari.net
+This is the code for the Recordari iOS app, available at https://recordari.net
 
 It's open for everyone to contribute to.
 

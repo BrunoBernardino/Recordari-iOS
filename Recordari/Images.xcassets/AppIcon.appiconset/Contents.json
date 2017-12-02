@@ -1,8 +1,9 @@
 {
   "images" : [
     {
-      "idiom" : "iphone",
       "size" : "20x20",
+      "idiom" : "iphone",
+      "filename" : "app-icon-42.png",
       "scale" : "2x"
     },
     {
@@ -52,8 +53,9 @@
       "scale" : "1x"
     },
     {
-      "idiom" : "ipad",
       "size" : "20x20",
+      "idiom" : "ipad",
+      "filename" : "app-icon-41.png",
       "scale" : "2x"
     },
     {
@@ -97,6 +99,12 @@
       "idiom" : "ipad",
       "filename" : "app-icon-167.png",
       "scale" : "2x"
+    },
+    {
+      "size" : "1024x1024",
+      "idiom" : "ios-marketing",
+      "filename" : "app-icon-1024.png",
+      "scale" : "1x"
     }
   ],
   "info" : {

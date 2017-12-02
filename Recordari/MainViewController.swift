@@ -34,6 +34,13 @@ class MainViewController: UIViewController, WCSessionDelegate {
     @IBOutlet weak var boxesView: UIView!
     @IBOutlet weak var logNewEventButton: UIButton!
     @IBOutlet weak var scrollView: UIScrollView!
+    
+    public override func viewSafeAreaInsetsDidChange() {
+        if #available(iOS 11.0, *) {
+            super.viewSafeAreaInsetsDidChange()
+            self.view.setNeedsLayout()
+        }
+    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -319,18 +326,17 @@ class MainViewController: UIViewController, WCSessionDelegate {
     
     // Show "toast"
     func showToast(_ message: String, window: UIWindow) {
-        // Hide status bar
-        self.statusBarShowing = false
-        self.setNeedsStatusBarAppearanceUpdate()
+        let initialYPos: CGFloat = window.frame.size.height
+        let finalYPos: CGFloat = window.frame.size.height - 50
         
         // Create view for the notification
-        let toastView = UIView(frame: CGRect(x: 0, y: -20, width: window.frame.size.width, height: 20))
+        let toastView = UIView(frame: CGRect(x: 0, y: initialYPos, width: window.frame.size.width, height: 50))
         
         // Set properties of the view
         toastView.backgroundColor = UIColor.black
         
         // Create label with text and properties
-        let labelView = UILabel(frame: CGRect(x: 0, y: 0, width: window.frame.size.width, height: 20))
+        let labelView = UILabel(frame: CGRect(x: 0, y: 0, width: window.frame.size.width, height: 50))
         labelView.text = message
         labelView.textColor = UIColor.white
         labelView.textAlignment = NSTextAlignment.center
@@ -345,21 +351,16 @@ class MainViewController: UIViewController, WCSessionDelegate {
         // Animate view entrance
         UIView.animate(withDuration: 0.5, delay: 0, options: UIViewAnimationOptions.curveEaseOut
             , animations: {
-                toastView.frame.origin.y = 0
+                toastView.frame.origin.y = finalYPos
             }, completion: {
                 (finished: Bool) -> Void in
                 
                 // Animate view exit
                 UIView.animate(withDuration: 0.3, delay: 1.5, options: UIViewAnimationOptions.curveEaseOut
                     , animations: {
-                        toastView.frame.origin.y = -20
+                        toastView.frame.origin.y = initialYPos
                     }, completion: {
                         (finished: Bool) -> Void in
-                        
-                        // Show status bar
-                        self.statusBarShowing = true
-                        self.setNeedsStatusBarAppearanceUpdate()
-                            
                         // Remove the view for the notification
                         toastView.removeFromSuperview()
                     }

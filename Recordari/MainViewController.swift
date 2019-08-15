@@ -222,7 +222,7 @@ class MainViewController: UIViewController, WCSessionDelegate {
         
         // Sort by count
         let sortDescriptor: NSSortDescriptor = NSSortDescriptor(key: "count", ascending: false)
-        objects = objects.sortedArray(using: [sortDescriptor]) as NSArray!
+        objects = (objects.sortedArray(using: [sortDescriptor]) as NSArray?)!
         
         // Return only top 12 elements at most
         if (objects.count > 12) {

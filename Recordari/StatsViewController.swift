@@ -102,7 +102,7 @@ class StatsViewController: UIViewController {
         
         // Sort by count
         let sortDescriptor: NSSortDescriptor = NSSortDescriptor(key: "count", ascending: false)
-        objects = objects.sortedArray(using: [sortDescriptor]) as NSArray!
+        objects = (objects.sortedArray(using: [sortDescriptor]) as NSArray?)!
         
         // Return only top 7 elements at most
         if (objects.count > 7) {
@@ -135,7 +135,7 @@ class StatsViewController: UIViewController {
             
             // Get 1 year ago
             let today: Date = Date()
-            let minDate: Date = Calendar.current.date(byAdding: .year, value: -1, to: today) as Date!
+            let minDate: Date = (Calendar.current.date(byAdding: .year, value: -1, to: today) as Date?)!
 
             // Get the latest date for this event
             let request = NSFetchRequest<NSFetchRequestResult>()

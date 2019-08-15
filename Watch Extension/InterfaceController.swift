@@ -91,7 +91,7 @@ class InterfaceController: WKInterfaceController, WCSessionDelegate {
             self.addLabel.setText("# Loading... #")
             
             watchSession!.sendMessage(message, replyHandler: { reply in
-                self.topEvents = reply["topEvents"] as! Array<String>
+                self.topEvents = (reply["topEvents"] as! Array<String>)
                 
                 // Update, in a non-GCD thread
                 DispatchQueue.main.async(execute: {

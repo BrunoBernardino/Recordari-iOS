@@ -279,7 +279,7 @@ class PastEventsViewController: UIViewController, UITableViewDelegate, UITableVi
         
         // Add any self.currentFilterName to search
         let filterNamePredicate: NSPredicate
-        if ( self.nameFilterBar.text!.characters.count > 0 ) {
+        if ( !self.nameFilterBar.text!.isEmpty ) {
             filterNamePredicate = NSPredicate(format: "(name CONTAINS[cd] %@)", self.nameFilterBar.text!)
             
             usedPredicates.add(filterNamePredicate)
@@ -441,7 +441,7 @@ class PastEventsViewController: UIViewController, UITableViewDelegate, UITableVi
     
     // Dismiss keyboard or show date pickers as necessary, when the main view is touched
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        let touch: UITouch = (touches.first as UITouch!)!
+        let touch: UITouch = (touches.first as UITouch?)!
         
         // Set action for tapping the "from date" view
         if (touch.view == self.fromDateLabel) {

@@ -44,7 +44,7 @@ class InterfaceController: WKInterfaceController, WCSessionDelegate {
         let oneDayAgo: Date = Date().addingTimeInterval(86400)
         
         if (WCSession.isSupported()) {
-            watchSession = WCSession.default()
+            watchSession = WCSession.default
             watchSession!.delegate = self
             watchSession!.activate()
             
@@ -65,7 +65,7 @@ class InterfaceController: WKInterfaceController, WCSessionDelegate {
         super.didDeactivate()
     }
     
-    func updateInterface() {
+    @objc func updateInterface() {
         NSLog("Updating UI...")
 
         if (topEvents?.count == 0) {

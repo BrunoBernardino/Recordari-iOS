@@ -44,7 +44,11 @@ class MainViewController: UIViewController, WCSessionDelegate {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view, typically from a nib.
+        
+        // Always adopt a light interface style on iOS 13
+        if #available(iOS 13.0, *) {
+            overrideUserInterfaceStyle = .light
+        }
         
         // Add color to the tab bar's active items
         UITabBar.appearance().tintColor = UIColor.black

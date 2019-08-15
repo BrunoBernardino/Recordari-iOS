@@ -271,8 +271,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             self.storeOptions = self.localStoreOptions()
         } else {
             var iCloudSettings: NSMutableDictionary = NSMutableDictionary(capacity: 5)
-    
-            iCloudSettings = self.settings.object(forKey: "iCloud") as! NSMutableDictionary
+            
+            iCloudSettings = (self.settings.object(forKey: "iCloud") as! NSDictionary).mutableCopy() as! NSMutableDictionary
             
             if (iCloudSettings.value(forKey: "isEnabled") as! Bool == true) {
                 self.storeOptions = self.iCloudStoreOptions()

@@ -51,10 +51,10 @@ class MainViewController: UIViewController, WCSessionDelegate {
         UITabBar.appearance().barTintColor = UIColor(red: 255/255.0, green: 20/255.0, blue: 168/255.0, alpha: 1)
         
         // Color for unselected text
-        UITabBarItem.appearance().setTitleTextAttributes([NSForegroundColorAttributeName: UIColor.white], for: UIControlState())
+        UITabBarItem.appearance().setTitleTextAttributes([NSAttributedString.Key.foregroundColor: UIColor.white], for: UIControl.State())
         
         // Color for selected text
-        UITabBarItem.appearance().setTitleTextAttributes([NSForegroundColorAttributeName: UIColor.black], for: UIControlState.selected)
+        UITabBarItem.appearance().setTitleTextAttributes([NSAttributedString.Key.foregroundColor: UIColor.black], for: UIControl.State.selected)
         
         //
         // Add color to the tab bar's inactive items
@@ -66,7 +66,7 @@ class MainViewController: UIViewController, WCSessionDelegate {
         let unselectedMainImage: UIImage = UIImage(named: "main-icon")!
         let selectedMainImage: UIImage = UIImage(named: "main-icon")!
         
-        mainIcon.image = unselectedMainImage.withRenderingMode(UIImageRenderingMode.alwaysOriginal)
+        mainIcon.image = unselectedMainImage.withRenderingMode(UIImage.RenderingMode.alwaysOriginal)
         mainIcon.selectedImage = selectedMainImage
         
         // Events tab item
@@ -75,7 +75,7 @@ class MainViewController: UIViewController, WCSessionDelegate {
         let unselectedEventsImage: UIImage = UIImage(named: "events-icon")!
         let selectedEventsImage: UIImage = UIImage(named: "events-icon")!
         
-        eventsIcon.image = unselectedEventsImage.withRenderingMode(UIImageRenderingMode.alwaysOriginal)
+        eventsIcon.image = unselectedEventsImage.withRenderingMode(UIImage.RenderingMode.alwaysOriginal)
         eventsIcon.selectedImage = selectedEventsImage
         
         // Settings tab item
@@ -84,7 +84,7 @@ class MainViewController: UIViewController, WCSessionDelegate {
         let unselectedSettingsImage: UIImage = UIImage(named: "settings-icon")!
         let selectedSettingsImage: UIImage = UIImage(named: "settings-icon")!
         
-        settingsIcon.image = unselectedSettingsImage.withRenderingMode(UIImageRenderingMode.alwaysOriginal)
+        settingsIcon.image = unselectedSettingsImage.withRenderingMode(UIImage.RenderingMode.alwaysOriginal)
         settingsIcon.selectedImage = selectedSettingsImage
         
         // Stats tab item
@@ -93,7 +93,7 @@ class MainViewController: UIViewController, WCSessionDelegate {
         let unselectedStatsImage: UIImage = UIImage(named: "stats-icon")!
         let selectedStatsImage: UIImage = UIImage(named: "stats-icon")!
         
-        statsIcon.image = unselectedStatsImage.withRenderingMode(UIImageRenderingMode.alwaysOriginal)
+        statsIcon.image = unselectedStatsImage.withRenderingMode(UIImage.RenderingMode.alwaysOriginal)
         statsIcon.selectedImage = selectedStatsImage
         
         // Initialize Watch Session
@@ -102,7 +102,7 @@ class MainViewController: UIViewController, WCSessionDelegate {
         }
         
         // Make sure you can log a new event
-        self.logNewEventButton.addTarget(self, action: #selector(MainViewController.addEvent(_:)), for: UIControlEvents.touchUpInside)
+        self.logNewEventButton.addTarget(self, action: #selector(MainViewController.addEvent(_:)), for: UIControl.Event.touchUpInside)
         
         // Make sure you can always scroll
         self.scrollView.contentSize = CGSize(width: self.boxesView.frame.size.width, height: self.boxesView.frame.size.height + 100)
@@ -141,7 +141,7 @@ class MainViewController: UIViewController, WCSessionDelegate {
         
         for topEvent in topEvents {
             let topEventButton = self.createEventButton(rowIndex: currentEventIndex, buttonText: (topEvent as AnyObject).value(forKey: "name") as! String)
-            topEventButton.addTarget(self, action: #selector(MainViewController.addEvent(_:)), for: UIControlEvents.touchUpInside)
+            topEventButton.addTarget(self, action: #selector(MainViewController.addEvent(_:)), for: UIControl.Event.touchUpInside)
 
             self.boxesView.addSubview(topEventButton)
             
@@ -167,14 +167,14 @@ class MainViewController: UIViewController, WCSessionDelegate {
         
         button.center = CGPoint(x: self.logNewEventButton.layer.position.x, y: yPos)
         
-        button.setTitle(buttonText, for: UIControlState())
+        button.setTitle(buttonText, for: UIControl.State())
         
-        button.setTitleColor(UIColor.black, for: UIControlState())
+        button.setTitleColor(UIColor.black, for: UIControl.State())
         //button.backgroundColor = UIColor.black
         
         button.clipsToBounds = true
         if #available(iOS 8.2, *) {
-            button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: UIFontWeightLight)
+            button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: UIFont.Weight.light)
         } else {
             // Fallback on earlier versions
         }
@@ -247,7 +247,7 @@ class MainViewController: UIViewController, WCSessionDelegate {
     }
     
     // A log button was pressed
-    func addEvent(_ sender: UIButton!) {
+    @objc func addEvent(_ sender: UIButton!) {
         //NSLog("Event Name = %@", sender.currentTitle!)
         
         // If we're not adding a quick event (but a new/custom one), trigger the segue
@@ -316,9 +316,9 @@ class MainViewController: UIViewController, WCSessionDelegate {
     func showAlert(_ message: String) {
         if #available(iOS 8.0, *) {
             let alertController = UIAlertController(title: "Recordari", message:
-                message, preferredStyle: UIAlertControllerStyle.alert)
+                message, preferredStyle: UIAlertController.Style.alert)
             
-            alertController.addAction(UIAlertAction(title: NSLocalizedString("OK", comment:""), style: UIAlertActionStyle.default,handler: nil))
+            alertController.addAction(UIAlertAction(title: NSLocalizedString("OK", comment:""), style: UIAlertAction.Style.default,handler: nil))
             
             self.present(alertController, animated: true, completion: nil)
         }
@@ -349,14 +349,14 @@ class MainViewController: UIViewController, WCSessionDelegate {
         window.addSubview(toastView)
         
         // Animate view entrance
-        UIView.animate(withDuration: 0.5, delay: 0, options: UIViewAnimationOptions.curveEaseOut
+        UIView.animate(withDuration: 0.5, delay: 0, options: UIView.AnimationOptions.curveEaseOut
             , animations: {
                 toastView.frame.origin.y = finalYPos
             }, completion: {
                 (finished: Bool) -> Void in
                 
                 // Animate view exit
-                UIView.animate(withDuration: 0.3, delay: 1.5, options: UIViewAnimationOptions.curveEaseOut
+                UIView.animate(withDuration: 0.3, delay: 1.5, options: UIView.AnimationOptions.curveEaseOut
                     , animations: {
                         toastView.frame.origin.y = initialYPos
                     }, completion: {
@@ -388,7 +388,7 @@ class MainViewController: UIViewController, WCSessionDelegate {
     @available(iOS 9.0, *)
     func initializeWatchSession() {
         if (WCSession.isSupported()) {
-            let watchSession = WCSession.default()
+            let watchSession = WCSession.default
             watchSession.delegate = self
             watchSession.activate()
         }

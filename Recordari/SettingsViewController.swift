@@ -36,9 +36,9 @@ class SettingsViewController: UIViewController, MFMailComposeViewControllerDeleg
     func showAlert(_ message: String) {
         if #available(iOS 8.0, *) {
             let alertController = UIAlertController(title: "Recordari", message:
-                message, preferredStyle: UIAlertControllerStyle.alert)
+                message, preferredStyle: UIAlertController.Style.alert)
             
-            alertController.addAction(UIAlertAction(title: NSLocalizedString("OK", comment:""), style: UIAlertActionStyle.default,handler: nil))
+            alertController.addAction(UIAlertAction(title: NSLocalizedString("OK", comment:""), style: UIAlertAction.Style.default,handler: nil))
             
             self.present(alertController, animated: true, completion: nil)
         }
@@ -69,14 +69,14 @@ class SettingsViewController: UIViewController, MFMailComposeViewControllerDeleg
         window.addSubview(toastView)
         
         // Animate view entrance
-        UIView.animate(withDuration: 0.5, delay: 0, options: UIViewAnimationOptions.curveEaseOut
+        UIView.animate(withDuration: 0.5, delay: 0, options: UIView.AnimationOptions.curveEaseOut
             , animations: {
                 toastView.frame.origin.y = finalYPos
         }, completion: {
             (finished: Bool) -> Void in
             
             // Animate view exit
-            UIView.animate(withDuration: 0.3, delay: 1.5, options: UIViewAnimationOptions.curveEaseOut
+            UIView.animate(withDuration: 0.3, delay: 1.5, options: UIView.AnimationOptions.curveEaseOut
                 , animations: {
                     toastView.frame.origin.y = initialYPos
             }, completion: {
@@ -276,7 +276,7 @@ class SettingsViewController: UIViewController, MFMailComposeViewControllerDeleg
         let appDelegate = UIApplication.shared.delegate as! AppDelegate
         
         if #available(iOS 8.0, *) {
-            let confirmRemove = UIAlertController( title: NSLocalizedString("Are you sure?", comment: ""), message: NSLocalizedString("This will remove all local & iCloud data for events", comment: ""), preferredStyle: UIAlertControllerStyle.alert )
+            let confirmRemove = UIAlertController( title: NSLocalizedString("Are you sure?", comment: ""), message: NSLocalizedString("This will remove all local & iCloud data for events", comment: ""), preferredStyle: UIAlertController.Style.alert )
             
             // Confirmed!
             confirmRemove.addAction(UIAlertAction(title: NSLocalizedString("Yes", comment: ""), style: .default, handler: { (action: UIAlertAction) in

@@ -18,7 +18,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     var storeOptions: NSDictionary!
 
-    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
+    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
         
         self.synchronizeSettings()
@@ -75,12 +75,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     // iCloud will update
-    func iCloudWillUpdate(_ sender: AnyObject) {
+    @objc func iCloudWillUpdate(_ sender: AnyObject) {
         self.setiCloudStartSyncDate()
     }
     
     // iCloud finished updating
-    func iCloudDidUpdate(_ sender: AnyObject) {
+    @objc func iCloudDidUpdate(_ sender: AnyObject) {
         self.setiCloudEndSyncDate()
     }
     
@@ -113,7 +113,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             object: psc);
     }
     
-    func mergeChanges(_ notification: Notification) {
+    @objc func mergeChanges(_ notification: Notification) {
         NSLog("mergeChanges notif:\(notification)")
         if let moc = managedObjectContext {
             moc.perform {
@@ -123,7 +123,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
     }
     
-    func persistentStoreDidImportUbiquitousContentChanges(_ notification: Notification) {
+    @objc func persistentStoreDidImportUbiquitousContentChanges(_ notification: Notification) {
         self.mergeChanges(notification)
     }
     
@@ -131,7 +131,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     // most likely to be called if the user enables / disables iCloud
     // (either globally, or just for your app) or if the user changes
     // iCloud accounts.
-    func storesWillChange(_ notification: Notification) {
+    @objc func storesWillChange(_ notification: Notification) {
         NSLog("storesWillChange notif:\(notification)");
         if let moc = self.managedObjectContext {
             moc.performAndWait {
@@ -158,7 +158,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
     
     // Subscribe to NSPersistentStoreCoordinatorStoresDidChangeNotification
-    func storesDidChange(_ notification: Notification) {
+    @objc func storesDidChange(_ notification: Notification) {
         // here is when you can refresh your UI and
         // load new data from the new store
         NSLog("storesDidChange posting notif");
@@ -211,7 +211,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             //error = NSError(domain: "Pendo_Error_Domain", code: 9999, userInfo: dict as! [NSObject : AnyObject])
             // Replace this with code to handle the error appropriately.
             // abort() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
-            NSLog("AddPersistentStore error \(error), \(error!.userInfo)")
+            NSLog("AddPersistentStore error \(String(describing: error)), \(error!.userInfo)")
         } catch {
             fatalError()
         }
@@ -245,7 +245,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                     error = error1
                     // Replace this implementation with code to handle the error appropriately.
                     // abort() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
-                    NSLog("Unresolved error \(error), \(error!.userInfo)")
+                    NSLog("Unresolved error \(String(describing: error)), \(error!.userInfo)")
                 }
             }
         }

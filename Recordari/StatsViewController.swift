@@ -243,7 +243,7 @@ class StatsViewController: UIViewController {
         let lastLogFrame = CGRect(x: thirdWidth * 2, y: yPos, width: thirdWidth, height: height)
         var labelFont = UIFont(name: "System Light", size: 15)
         if #available(iOS 8.2, *) {
-            labelFont = UIFont.systemFont(ofSize: 15, weight: UIFontWeightLight)
+            labelFont = UIFont.systemFont(ofSize: 15, weight: UIFont.Weight.light)
         }
         let statView = UIView(frame: frame)
         

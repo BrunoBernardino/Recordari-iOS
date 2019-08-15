@@ -124,7 +124,7 @@ class PastEventsViewController: UIViewController, UITableViewDelegate, UITableVi
     
     // Show edit/update event view
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        self.selectedEvent = self.events.object(at: indexPath.row) as! NSManagedObject
+        self.selectedEvent = (self.events.object(at: indexPath.row) as! NSManagedObject)
         
         // Show edit event
         self.performSegue(withIdentifier: "editEvent", sender: self)
@@ -136,9 +136,9 @@ class PastEventsViewController: UIViewController, UITableViewDelegate, UITableVi
     }
     
     // Delete event
-    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
+    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
 
-        if (editingStyle == UITableViewCellEditingStyle.delete) {
+        if (editingStyle == UITableViewCell.EditingStyle.delete) {
             let appDelegate = UIApplication.shared.delegate as! AppDelegate
             let context: NSManagedObjectContext? = appDelegate.managedObjectContext
             
@@ -151,7 +151,7 @@ class PastEventsViewController: UIViewController, UITableViewDelegate, UITableVi
             
             // Delete from view
             self.events.removeObject(at: indexPath.row)
-            tableView.deleteRows(at: [indexPath], with:UITableViewRowAnimation.fade)
+            tableView.deleteRows(at: [indexPath], with:UITableView.RowAnimation.fade)
             
             // Reload data
             self.getAllEvents()
@@ -174,7 +174,7 @@ class PastEventsViewController: UIViewController, UITableViewDelegate, UITableVi
     }
     
     // When the from date UIDatePicker is set, update the label and filters
-    func fromDatePickerChanged(_ sender: UIDatePicker) {
+    @objc func fromDatePickerChanged(_ sender: UIDatePicker) {
         let dateFormatter: DateFormatter = DateFormatter()
         dateFormatter.dateStyle = DateFormatter.Style.short
         dateFormatter.dateFormat = "MMM d, YYYY"
@@ -191,7 +191,7 @@ class PastEventsViewController: UIViewController, UITableViewDelegate, UITableVi
     }
     
     // When the to date UIDatePicker is set, update the label and filters
-    func toDatePickerChanged(_ sender: UIDatePicker) {
+    @objc func toDatePickerChanged(_ sender: UIDatePicker) {
         let dateFormatter: DateFormatter = DateFormatter()
         dateFormatter.dateStyle = DateFormatter.Style.short
         dateFormatter.dateFormat = "MMM d, YYYY"
@@ -208,7 +208,7 @@ class PastEventsViewController: UIViewController, UITableViewDelegate, UITableVi
     }
     
     // Close the datepicker, when "Done" is tapped
-    func datePickerDone(_ sender: AnyObject) {
+    @objc func datePickerDone(_ sender: AnyObject) {
         // Dismiss datepicker on date fields
         self.fromDateLabel.endEditing(true)
         self.toDateLabel.endEditing(true)
@@ -395,7 +395,7 @@ class PastEventsViewController: UIViewController, UITableViewDelegate, UITableVi
     // Add a datepicker with the "Done" button to an input
     func addDatePickerToInput(_ inputShortName: String) {
         let datePickerView: UIDatePicker = UIDatePicker()
-        datePickerView.datePickerMode = UIDatePickerMode.date
+        datePickerView.datePickerMode = UIDatePicker.Mode.date
         datePickerView.backgroundColor = UIColor.white
 
         if (inputShortName == "from") {
@@ -416,8 +416,8 @@ class PastEventsViewController: UIViewController, UITableViewDelegate, UITableVi
         toolBar.sizeToFit()
         toolBar.frame.origin.y = -43
         
-        let doneButton = UIBarButtonItem(title: NSLocalizedString("Done", comment:""), style: UIBarButtonItemStyle.plain, target: self, action: #selector(PastEventsViewController.datePickerDone(_:)))
-        let spaceButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.flexibleSpace, target: nil, action: nil)
+        let doneButton = UIBarButtonItem(title: NSLocalizedString("Done", comment:""), style: UIBarButtonItem.Style.plain, target: self, action: #selector(PastEventsViewController.datePickerDone(_:)))
+        let spaceButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonItem.SystemItem.flexibleSpace, target: nil, action: nil)
         doneButton.tintColor = UIColor.black
         
         toolBar.setItems([spaceButton, doneButton], animated: true)
@@ -429,13 +429,13 @@ class PastEventsViewController: UIViewController, UITableViewDelegate, UITableVi
             
             // Add the UIDatePicker to the view
             self.fromDateLabel.inputView = datePickerView
-            datePickerView.addTarget(self, action: #selector(PastEventsViewController.fromDatePickerChanged(_:)), for: UIControlEvents.valueChanged)
+            datePickerView.addTarget(self, action: #selector(PastEventsViewController.fromDatePickerChanged(_:)), for: UIControl.Event.valueChanged)
         } else {
             self.toDateLabel.inputAccessoryView = toolBar
             
             // Add the UIDatePicker to the view
             self.toDateLabel.inputView = datePickerView
-            datePickerView.addTarget(self, action: #selector(PastEventsViewController.toDatePickerChanged(_:)), for: UIControlEvents.valueChanged)
+            datePickerView.addTarget(self, action: #selector(PastEventsViewController.toDatePickerChanged(_:)), for: UIControl.Event.valueChanged)
         }
     }
     
@@ -481,9 +481,9 @@ class PastEventsViewController: UIViewController, UITableViewDelegate, UITableVi
     func showAlert(_ message: String) {
         if #available(iOS 8.0, *) {
             let alertController = UIAlertController(title: "Recordari", message:
-                message, preferredStyle: UIAlertControllerStyle.alert)
+                message, preferredStyle: UIAlertController.Style.alert)
             
-            alertController.addAction(UIAlertAction(title: NSLocalizedString("OK", comment:""), style: UIAlertActionStyle.default,handler: nil))
+            alertController.addAction(UIAlertAction(title: NSLocalizedString("OK", comment:""), style: UIAlertAction.Style.default,handler: nil))
             
             self.present(alertController, animated: true, completion: nil)
         }
@@ -514,14 +514,14 @@ class PastEventsViewController: UIViewController, UITableViewDelegate, UITableVi
         window.addSubview(toastView)
         
         // Animate view entrance
-        UIView.animate(withDuration: 0.5, delay: 0, options: UIViewAnimationOptions.curveEaseOut
+        UIView.animate(withDuration: 0.5, delay: 0, options: UIView.AnimationOptions.curveEaseOut
             , animations: {
                 toastView.frame.origin.y = finalYPos
         }, completion: {
             (finished: Bool) -> Void in
             
             // Animate view exit
-            UIView.animate(withDuration: 0.3, delay: 1.5, options: UIViewAnimationOptions.curveEaseOut
+            UIView.animate(withDuration: 0.3, delay: 1.5, options: UIView.AnimationOptions.curveEaseOut
                 , animations: {
                     toastView.frame.origin.y = initialYPos
             }, completion: {

@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 51;
+	objectVersion = 52;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -15,7 +15,7 @@
 		4F5814CA1D0A10E9001F014F /* InterfaceController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F5814C91D0A10E9001F014F /* InterfaceController.swift */; };
 		4F5814CC1D0A10E9001F014F /* ExtensionDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F5814CB1D0A10E9001F014F /* ExtensionDelegate.swift */; };
 		4F5814CE1D0A10E9001F014F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4F5814CD1D0A10E9001F014F /* Assets.xcassets */; };
-		4F5814D21D0A10E9001F014F /* Watch.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = 4F5814B81D0A10E9001F014F /* Watch.app */; };
+		4F5814D21D0A10E9001F014F /* Watch.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = 4F5814B81D0A10E9001F014F /* Watch.app */; platformFilter = ios; };
 		4F5814DE1D0A16EE001F014F /* EventsTableRowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F5814DD1D0A16EE001F014F /* EventsTableRowController.swift */; };
 		4F86394B1B668B6600CC4936 /* EditEventViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F86394A1B668B6600CC4936 /* EditEventViewController.swift */; };
 		4FBD43B21B5FD5AC00623FCB /* EventTableCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FBD43B11B5FD5AC00623FCB /* EventTableCell.swift */; };
@@ -309,7 +309,6 @@
 				TargetAttributes = {
 					4F5814B71D0A10E9001F014F = {
 						CreatedOnToolsVersion = 7.3.1;
-						DevelopmentTeam = BR4RWWLMM9;
 						LastSwiftMigration = 0810;
 					};
 					4F5814C31D0A10E9001F014F = {
@@ -335,7 +334,7 @@
 				};
 			};
 			buildConfigurationList = 4FC2AA211B5E651E0000FC86 /* Build configuration list for PBXProject "Recordari" */;
-			compatibilityVersion = "Xcode 10.0";
+			compatibilityVersion = "Xcode 11.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -436,6 +435,7 @@
 		};
 		4F5814D11D0A10E9001F014F /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
+			platformFilter = ios;
 			target = 4F5814B71D0A10E9001F014F /* Watch */;
 			targetProxy = 4F5814D01D0A10E9001F014F /* PBXContainerItemProxy */;
 		};
@@ -471,6 +471,7 @@
 			buildSettings = {
 				CLANG_ANALYZER_NONNULL = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CURRENT_PROJECT_VERSION = 15;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = BR4RWWLMM9;
 				INFOPLIST_FILE = "Watch Extension/Info.plist";
@@ -479,6 +480,7 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
+				MARKETING_VERSION = 1.4.2;
 				PRODUCT_BUNDLE_IDENTIFIER = com.emotionloop.Recordari.watchkitapp.watchkitextension;
 				PRODUCT_NAME = "${TARGET_NAME}";
 				SDKROOT = watchos;
@@ -494,6 +496,7 @@
 			buildSettings = {
 				CLANG_ANALYZER_NONNULL = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CURRENT_PROJECT_VERSION = 15;
 				DEVELOPMENT_TEAM = BR4RWWLMM9;
 				INFOPLIST_FILE = "Watch Extension/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -501,6 +504,7 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
+				MARKETING_VERSION = 1.4.2;
 				PRODUCT_BUNDLE_IDENTIFIER = com.emotionloop.Recordari.watchkitapp.watchkitextension;
 				PRODUCT_NAME = "${TARGET_NAME}";
 				SDKROOT = watchos;
@@ -517,14 +521,18 @@
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ANALYZER_NONNULL = YES;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "Apple Development";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 15;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = BR4RWWLMM9;
 				IBSC_MODULE = Watch_Extension;
 				INFOPLIST_FILE = Watch/Info.plist;
+				MARKETING_VERSION = 1.4.2;
 				PRODUCT_BUNDLE_IDENTIFIER = com.emotionloop.Recordari.watchkitapp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = watchos;
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 3.0;
@@ -539,13 +547,17 @@
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ANALYZER_NONNULL = YES;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "Apple Development";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 15;
 				DEVELOPMENT_TEAM = BR4RWWLMM9;
 				IBSC_MODULE = Watch_Extension;
 				INFOPLIST_FILE = Watch/Info.plist;
+				MARKETING_VERSION = 1.4.2;
 				PRODUCT_BUNDLE_IDENTIFIER = com.emotionloop.Recordari.watchkitapp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = watchos;
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 3.0;
@@ -670,6 +682,8 @@
 				CODE_SIGN_ENTITLEMENTS = Recordari/Recordari.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CURRENT_PROJECT_VERSION = 15;
+				DERIVE_MACCATALYST_PRODUCT_BUNDLE_IDENTIFIER = YES;
 				DEVELOPMENT_TEAM = BR4RWWLMM9;
 				INFOPLIST_FILE = Recordari/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
@@ -677,9 +691,11 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
+				MARKETING_VERSION = 1.4.2;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.emotionloop.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
+				SUPPORTS_MACCATALYST = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -693,6 +709,8 @@
 				CODE_SIGN_ENTITLEMENTS = Recordari/Recordari.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CURRENT_PROJECT_VERSION = 15;
+				DERIVE_MACCATALYST_PRODUCT_BUNDLE_IDENTIFIER = YES;
 				DEVELOPMENT_TEAM = BR4RWWLMM9;
 				INFOPLIST_FILE = Recordari/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
@@ -700,9 +718,11 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
+				MARKETING_VERSION = 1.4.2;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.emotionloop.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
+				SUPPORTS_MACCATALYST = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};

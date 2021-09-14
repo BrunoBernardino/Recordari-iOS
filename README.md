@@ -1,8 +1,6 @@
 # Recordari iOS
 
-This is the code for the Recordari iOS app, available at https://itunes.apple.com/pt/app/recordari-unscheduled-events/id1026206599
-
-It's open for everyone to contribute to.
+This is the code for the Recordari iOS app, it is no longer available in the app store, and has been superseded by https://loggit.net
 
 This was my second ever iOS project, and first Swift experience as well, so I know the structure is not great.
 
